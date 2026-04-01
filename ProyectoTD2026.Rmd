@@ -1,0 +1,15 @@
+---
+title: "ProyectoTD2026"
+author: "Sofia Rivera Vidal"
+date: "2026-03-31"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(readr)
+data <- read_csv("data/logs_moodle_anon.csv")
+```
