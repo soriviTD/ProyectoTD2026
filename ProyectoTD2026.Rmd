@@ -11,5 +11,18 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ```{r}
 library(readr)
+library(dplyr)
+library(tidyverse)
+library(ggplot2)
+```
+
+
+```{r}
+library(readr)
 data <- read_csv("data/logs_moodle_anon.csv")
+data$Hora <- dmy_hms(data$Hora)
+data <- data %>% mutate(Fecha = as_date(Hora)) %>% mutate(Hora = format(Hora, "%H:%M:%S"))
+colnames(data)
+data <- subset(data, select=c(10, 1:9))
+View(data)
 ```
