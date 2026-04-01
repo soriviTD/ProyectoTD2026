@@ -18,8 +18,10 @@ library(ggplot2)
 
 
 ```{r}
-library(readr)
+#Carga de datos
 data <- read_csv("data/logs_moodle_anon.csv")
+
+#Corrección de la columna "Hora" para que tenga formato. División de esta en "Fecha" y "Hora".
 data$Hora <- dmy_hms(data$Hora)
 data <- data %>% mutate(Fecha = as_date(Hora)) %>% mutate(Hora = format(Hora, "%H:%M:%S"))
 colnames(data)
