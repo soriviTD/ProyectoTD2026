@@ -18,6 +18,8 @@ library(ggplot2)
 
 
 ```{r}
+library(tidyverse)
+library(lubridate)
 #Carga de datos
 data <- read_csv("data/logs_moodle_anon.csv")
 
@@ -27,4 +29,17 @@ data <- data %>% mutate(Fecha = as_date(Hora)) %>% mutate(Hora = format(Hora, "%
 colnames(data)
 data <- subset(data, select=c(10, 1:9))
 View(data)
+
+#Convertimos Hora a hms en lugar de caracter
+library(hms)
+data$Hora <- as_hms(data$Hora)
+
 ```
+
+```{r}
+#Vemos si hay filas duplicadas
+sum(duplicated(data))
+```
+
+
+
