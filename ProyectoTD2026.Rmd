@@ -48,7 +48,7 @@ data %>%
        caption = "La hora del día con más eventos es a las 9:00 con más de 15000 eventos")
 
 ```
-
+En la Figura 1 se puede observar la distribución de eventos a lo largo del día, donde destaca una mayor actividad durante las horas de la mañana, especialmente a las 9:00.
 
 
 
