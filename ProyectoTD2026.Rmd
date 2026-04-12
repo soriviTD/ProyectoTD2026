@@ -35,11 +35,20 @@ library(hms)
 data$Hora <- as_hms(data$Hora)
 
 ```
+FIGURA 1. Gráfica de eventos por hora del día
+```{r fig.cap="Figura 1: Distribución de eventos por hora del día"}
+library(lubridate)
+data %>% 
+  mutate(hora_dia = hour(Hora)) %>%
+  count(hora_dia) %>%
+  ggplot(aes(hora_dia, n)) + geom_bar(stat = "identity", fill = "red") +
+  labs(title = "EVENTOS POR HORA DEL DÍA",
+       x = "Hora del Dia(0-23)",
+       y = "Numero de Eventos",
+       caption = "La hora del día con más eventos es a las 9:00 con más de 15000 eventos")
 
-```{r}
-#Vemos si hay filas duplicadas
-sum(duplicated(data))
 ```
+
 
 
 
