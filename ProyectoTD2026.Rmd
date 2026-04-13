@@ -2,7 +2,23 @@
 title: "ProyectoTD2026"
 author: "Sofia Rivera Vidal"
 date: "2026-03-31"
-output: html_document
+output:
+  bookdown::pdf_document2:
+    fig_caption: yes
+    df_print: kable
+  bookdown::html_document2:
+    fig_caption: yes
+    df_print: kable
+lang: es
+header-includes:
+  - \usepackage{graphicx}
+  - \usepackage{fancyhdr}
+  - \usepackage{caption}
+  - \addto\captionsspanish{\renewcommand{\tablename}{Tabla}}
+  - \pagestyle{fancy}
+  - \fancyhf{}
+  - \renewcommand{\headrulewidth}{0.5pt}
+  - \renewcommand{\footrulewidth}{0.4pt}
 ---
 
 ```{r setup, include=FALSE}
@@ -35,8 +51,8 @@ library(hms)
 data$Hora <- as_hms(data$Hora)
 
 ```
-FIGURA 1. Gráfica de eventos por hora del día
-```{r fig.cap="Figura 1: Distribución de eventos por hora del día"}
+
+```{r figura-eventos, fig.cap = "Distribución de eventos por hora del día"}
 library(lubridate)
 data %>% 
   mutate(hora_dia = hour(Hora)) %>%
@@ -48,7 +64,8 @@ data %>%
        caption = "La hora del día con más eventos es a las 9:00 con más de 15000 eventos")
 
 ```
-En la Figura 1 se puede observar la distribución de eventos a lo largo del día, donde destaca una mayor actividad durante las horas de la mañana, especialmente a las 9:00.
+
+En la Figura \@ref(fig:figura-eventos) se puede observar la distribución de eventos a lo largo del día, donde destaca una mayor actividad durante las horas de la mañana, especialmente a las 9:00.
 
 
 
