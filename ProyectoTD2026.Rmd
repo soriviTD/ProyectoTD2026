@@ -76,3 +76,6 @@ Preguntas:
 1. ¿Cuál es la hora pico de acceso? ¿qué día de la semana hay más actividad?
 2. ¿Cuántos eventos totales hay?
 3. ¿Cuántos usuarios distintos aparecen?
+4. ¿Cómo ha evolucionado la actividad a lo largo de los meses?
+5. ¿Hay actividad registrada en horarios atípicos (madrugada, festivos)?
+6. ¿Predomina la consulta de recursos o la interacción activa?
