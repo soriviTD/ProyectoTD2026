@@ -81,3 +81,6 @@ Preguntas:
 6. ¿Predomina la consulta de recursos o la interacción activa?
 7. ¿Cuántas veces el que más y el que menos? ¿Primera y última vez?
 8. ¿Cuántos intentos de cuestionario hace de media cada estudiante?
+9. ¿Desde cuántas IPs distintas se conecta un mismo usuario? ¿Hay alguna ilógica?
+10. ¿Existen IPs compartidas por muchos usuarios?
+11. ¿Qué porcentaje de usuarios accede desde redes móviles y cuántos desde redes fijas?
