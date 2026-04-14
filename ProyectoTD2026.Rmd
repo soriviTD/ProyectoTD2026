@@ -68,6 +68,16 @@ data %>%
 En la Figura \@ref(fig:figura-eventos) se puede observar la distribución de eventos a lo largo del día, donde destaca una mayor actividad durante las horas de la mañana, especialmente a las 9:00.
 
 
+```{r}
+library(knitr)
+
+data %>% 
+  mutate(hora_dia = hour(Hora)) %>%
+  count(hora_dia) %>%
+  kable(col.names = c("Hora del día", "Número de eventos"))
+```
+
+
 
 Tras verificar que los datos están organizados en un marco de datos, que los valores están correctamente identificados y almacenados con el tipo de dato apropiado, y que comprendemos el origen de los valores NA, podemos comenzar a explorar posibles patrones tanto en las observaciones como en las variables. 
 A partir de este análisis inicial, surgen varias preguntas al reflexionar sobre qué aspectos de los datos son más relevantes para el análisis.
