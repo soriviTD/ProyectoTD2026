@@ -69,3 +69,10 @@ En la Figura \@ref(fig:figura-eventos) se puede observar la distribución de eve
 
 
 
+Tras verificar que los datos están organizados en un marco de datos, que los valores están correctamente identificados y almacenados con el tipo de dato apropiado, y que comprendemos el origen de los valores NA, podemos comenzar a explorar posibles patrones tanto en las observaciones como en las variables. 
+A partir de este análisis inicial, surgen varias preguntas al reflexionar sobre qué aspectos de los datos son más relevantes para el análisis.
+
+Preguntas:
+1. ¿Cuál es la hora pico de acceso? ¿qué día de la semana hay más actividad?
+2. ¿Cuántos eventos totales hay?
+3. ¿Cuántos usuarios distintos aparecen?
