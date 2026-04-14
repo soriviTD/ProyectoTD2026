@@ -84,3 +84,7 @@ Preguntas:
 9. ¿Desde cuántas IPs distintas se conecta un mismo usuario? ¿Hay alguna ilógica?
 10. ¿Existen IPs compartidas por muchos usuarios?
 11. ¿Qué porcentaje de usuarios accede desde redes móviles y cuántos desde redes fijas?
+12. ¿Cómo se distribuye la entrega de tareas?
+13. ¿Cuál es la secuencia de acciones más habitual en una sesión?
+14. ¿Cuánto tiempo pasa entre acciones relacionadas?
+15. ¿Qué acciones conllevan acción sobre sí mismo u otro usuario?
