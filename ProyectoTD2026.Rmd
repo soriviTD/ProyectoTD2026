@@ -88,7 +88,7 @@ Preguntas:
 3. ¿Cuántos usuarios distintos aparecen?
 4. ¿Cómo ha evolucionado la actividad a lo largo de los meses?
 5. ¿Hay actividad registrada en horarios atípicos (madrugada, festivos)?
-6. ¿Predomina la consulta de recursos o la interacción activa?
+6. ¿Predomina la consulta de recursos o la interacción activa? 
 7. ¿Cuántas veces el que más y el que menos? ¿Primera y última vez?
 8. ¿Cuántos intentos de cuestionario hace de media cada estudiante?
 9. ¿Desde cuántas IPs distintas se conecta un mismo usuario? ¿Hay alguna ilógica?
