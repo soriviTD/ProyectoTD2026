@@ -20,17 +20,7 @@ header-includes:
   - \renewcommand{\headrulewidth}{0.5pt}
   - \renewcommand{\footrulewidth}{0.4pt}
 ---
-INTRODUCCIÓN
 
-Este proyecto tiene como objetivo analizar un conjunto de datos procedentes de los logs de la plataforma Moodle, con el fin de identificar patrones de comportamiento, hábitos de uso y posibles anomalías en la interacción de los usuarios. Con estos datos, realizaremos un análisis para poder comprender cuándo y cómo se utiliza la plataforma, y el grado de actividad de los usuarios. 
-Para ello, llevaremos a cabo un proceso de limpieza y transformación de los datos, generando tablas y gráficos para que sea más visual.
-Entre los aspectos analizados se incluyen la distribución temporal de los eventos, la frecuencia de uso, la actividad por usuario y la evolución de la interacción a lo largo del tiempo.
-
-
-
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
 
 ```{r}
 library(readr)
