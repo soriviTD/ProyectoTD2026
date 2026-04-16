@@ -121,7 +121,7 @@ datos_tabla <- data %>%
   select(Fecha, Hora, Usuario, Componente)
 
 knitr::kable(datos_tabla, 
-             caption = "Datos las acciones realizadas por usuarios según fecha y hora", 
+             caption = "Acciones realizadas por usuarios según fecha y hora", 
              booktabs = TRUE)
 ```
 
