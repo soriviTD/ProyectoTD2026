@@ -1,6 +1,6 @@
 ---
 title: "ProyectoTD2026"
-author: "Sofia Rivera Vidal"
+author: "Andreu Fuentes Ponce, Mario Izquierdo Puchades, Sofia Rivera Vidal, Marta Sisternas Ruíz, Belinda Villalta Lillo"
 date: "2026-03-31"
 output:
   bookdown::pdf_document2:
@@ -27,15 +27,28 @@ library(readr)
 library(dplyr)
 library(tidyverse)
 library(ggplot2)
+library(lubridate)
 ```
 
-
 ```{r}
-library(tidyverse)
-library(lubridate)
 #Carga de datos
 data <- read_csv("data/logs_moodle_anon.csv")
 
+#Análisis introductorio
+
+dim(data)
+nrow(data)
+ncol(data)
+colnames(data)
+str(data)
+lapply(data, class)
+
+```
+El dataset está compuesto por un total de 109.746 observaciones (filas) y 10 variables (columnas).
+Las variables incluidas en el conjunto de datos son: Hora, Nombre completo del usuario, Usuario afectado, Contexto del evento, Componente y Nombre evento, Descripción, Origen, y Dirección IP.
+Antes de ser tratadas, todas la variables aparecen como categóricas de tipo carácter (character).
+
+```{r}
 #Corrección de la columna "Hora" para que tenga formato. División de esta en "Fecha" y "Hora".
 data$Hora <- dmy_hms(data$Hora)
 data <- data %>% mutate(Fecha = as_date(Hora)) %>% mutate(Hora = format(Hora, "%H:%M:%S"))
@@ -47,10 +60,49 @@ View(data)
 library(hms)
 data$Hora <- as_hms(data$Hora)
 
+colnames(data)[3] <- 'Usuario'
+colnames(data)[4] <- 'Usuario_afectado'
 ```
+Una vez arregladas algunas columnas, la columna de 'Hora' se ha separado en 'Fecha' y 'Hora'.
+En cuanto a los tipos de datos, la fecha es Date y hora hms. El resto de ellas se mantienen como de tipo carácter.
+
+A partir de este análisis inicial, surgen varias preguntas al reflexionar sobre qué aspectos de los datos son más relevantes para el análisis.
+
+Preguntas:
+1. ¿Cuál es la hora pico de acceso? ¿qué día de la semana hay más actividad?
+
+2. ¿Cuántos eventos totales hay?
+
+3. ¿Cuántos usuarios distintos aparecen?
+
+4. ¿Cómo ha evolucionado la actividad a lo largo de los meses?
+
+5. ¿Hay actividad registrada en horarios atípicos (madrugada, festivos)?
+
+6. ¿Predomina la consulta de recursos o la interacción activa?
+
+7. Media de entrada por usuario. ¿Cuántas veces el que más y el que menos? ¿Primera y última 
+vez?
+
+8. ¿Cuántos intentos de cuestionario hace de media cada estudiante?
+
+9. ¿Qué tipo de acciones son las más comunes?
+
+10. ¿Desde cuántas IPs distintas se conecta un mismo usuario? ¿Hay alguna ilógica?
+
+11. ¿Existen IPs compartidas por muchos usuarios?
+
+12. ¿Qué porcentaje de usuarios accede desde redes móviles y cuántos desde redes fijas?
+
+13. ¿Cómo se distribuye la entrega de tareas?
+
+14. ¿Cuál es la secuencia de acciones más habitual en una sesión?
+
+15. ¿Cuánto tiempo pasa entre acciones relacionadas?
+
+16. ¿Qué acciones conllevan acción sobre uno mismo? ¿Y sobre otro usuario?
 
 ```{r figura-eventos, fig.cap = "Distribución de eventos por hora del día"}
-library(lubridate)
 data %>% 
   mutate(hora_dia = hour(Hora)) %>%
   count(hora_dia) %>%
@@ -59,42 +111,17 @@ data %>%
        x = "Hora del Dia(0-23)",
        y = "Numero de Eventos",
        caption = "La hora del día con más eventos es a las 9:00 con más de 15000 eventos")
-
 ```
 
 En la Figura \@ref(fig:figura-eventos) se puede observar la distribución de eventos a lo largo del día, donde destaca una mayor actividad durante las horas de la mañana, especialmente a las 9:00.
 
 ```{r}
-#Análisis introductorio
+datos_tabla <- data %>%
+  head(5) %>%
+  select(Fecha, Hora, Usuario, Componente)
 
-dim(data)
-nrow(data)
-ncol(data)
-colnames(data)
-str(data)
-
+knitr::kable(datos_tabla, 
+             caption = "Datos las acciones realizadas por usuarios según fecha y hora", 
+             booktabs = TRUE)
 ```
-El dataset está compuesto por un total de 109.746 observaciones (filas) y 10 variables (columnas).
-Las variables incluidas en el conjunto de datos son: Fecha y Hora, Nombre completo del usuario, Usuario afectado, Contexto del evento, Componente y Nombre evento, Descripción, Origen, y Dirección IP.
-En cuanto a los tipos de datos, el conjunto incluye variables de tipo fecha (Date), hora (hms) y variables categóricas de tipo carácter (character).
 
-
-Tras verificar que los datos están organizados en un marco de datos, que los valores están correctamente identificados y almacenados con el tipo de dato apropiado, y que comprendemos el origen de los valores NA, podemos comenzar a explorar posibles patrones tanto en las observaciones como en las variables. 
-A partir de este análisis inicial, surgen varias preguntas al reflexionar sobre qué aspectos de los datos son más relevantes para el análisis.
-
-Preguntas:
-1. ¿Cuál es la hora pico de acceso? ¿qué día de la semana hay más actividad?
-2. ¿Cuántos eventos totales hay?
-3. ¿Cuántos usuarios distintos aparecen?
-4. ¿Cómo ha evolucionado la actividad a lo largo de los meses?
-5. ¿Hay actividad registrada en horarios atípicos (madrugada, festivos)?
-6. ¿Predomina la consulta de recursos o la interacción activa?
-7. ¿Cuántas veces el que más y el que menos? ¿Primera y última vez?
-8. ¿Cuántos intentos de cuestionario hace de media cada estudiante?
-9. ¿Desde cuántas IPs distintas se conecta un mismo usuario? ¿Hay alguna ilógica?
-10. ¿Existen IPs compartidas por muchos usuarios?
-11. ¿Qué porcentaje de usuarios accede desde redes móviles y cuántos desde redes fijas?
-12. ¿Cómo se distribuye la entrega de tareas?
-13. ¿Cuál es la secuencia de acciones más habitual en una sesión?
-14. ¿Cuánto tiempo pasa entre acciones relacionadas?
-15. ¿Qué acciones conllevan acción sobre sí mismo u otro usuario?
