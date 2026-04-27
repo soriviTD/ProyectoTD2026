@@ -127,11 +127,12 @@ knitr::kable(datos_tabla,
 ```
 
 
+
 Respuestas:
 
 1. ¿Cuál es la hora pico de acceso? ¿qué día de la semana hay más actividad?
 
-```{r}
+```{r figura-horapico, fig.cap="Distribución de eventos por hora del día"}
 library(lubridate)
 library(dplyr)
 library(ggplot2)
@@ -147,8 +148,6 @@ hora_pico <- eventos_hora %>%
 
 hora_pico
 
-## la hora pico es a las 9:00 de la mañana con 16.192
-
 # Gráfico de eventos por hora
 ggplot(eventos_hora, aes(x = hora_dia, y = n)) +
   geom_col(fill="steelblue") +
@@ -159,7 +158,10 @@ ggplot(eventos_hora, aes(x = hora_dia, y = n)) +
   )
 
 ```
-```{r}
+En la Figura \@ref(fig:figura-horapico) se observa que la hora pico de acceso es las 9:00 con 16192.
+
+
+```{r figura-diasemana, fig.cap="Eventos por día de la semana"}
 # Día de la semana con más actividad
 
 # Creamos variable día semana
@@ -191,6 +193,8 @@ ggplot(eventos_dia,
 
 ```
 
+En la Figura \@ref(fig:figura-diasemana) se puede observar que el día con mayor actividad es el miércoles, con 25.644 registros.
+
 2. ¿Cuántos eventos totales hay?
 
 ```{r}
@@ -204,10 +208,30 @@ data %>% summarise(total_eventos = n())
 
 3. ¿Cuántos usuarios distintos aparecen?
 
-```{r}
+```{r figura-usuariostop, fig.cap="Top 3 usuarios con más actividad"}
+usuarios_distintos <- data %>%
+  summarise(total_usuarios = n_distinct(Usuario))
+
+usuarios_distintos
+
+# Aparecen 87 usuarios distintos en el conjunto de datos
+
+# Los 5 usuarios con mas actividad
+
+usuarios_top <- data %>%
+  count(Usuario) %>%
+  arrange(desc(n)) %>%   # Ordenar de mayor a menor
+  head(3)              # cogemos los 3 primeros
+
+ggplot(usuarios_top, aes(x = reorder(Usuario, n), y = n)) +
+  geom_col(fill="blue") +
+  coord_flip() +
+  labs(
+    title="Top 3 usuarios con más actividad",
+    x="Usuario",
+    y="Número de eventos"
+  )
 
 ```
-
-
-
+En la Figura \@ref(fig:figura-usuariostop) se observan los tres usuarios con mayor actividad y sus registros
 
