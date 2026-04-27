@@ -216,7 +216,7 @@ usuarios_distintos
 
 # Aparecen 87 usuarios distintos en el conjunto de datos
 
-# Los 5 usuarios con mas actividad
+# Los 3 usuarios con mas actividad
 
 usuarios_top <- data %>%
   count(Usuario) %>%
@@ -234,4 +234,40 @@ ggplot(usuarios_top, aes(x = reorder(Usuario, n), y = n)) +
 
 ```
 En la Figura \@ref(fig:figura-usuariostop) se observan los tres usuarios con mayor actividad y sus registros
+
+
+#Memoria del trabajo realizado
+##Introducción
+
+En este proyecto se ha trabajado con un conjunto de datos procedente de registros de actividad de la plataforma Moodle (logs_moodle_anon.csv), con el objetivo de extraer información relevante a partir de los eventos registrados.
+
+Esta parte del proyecto consiste en identificar la hora pico de acceso y el día con mayor actividad, calcular el número total de eventos registrados y analizar cuántos usuarios distintos aparecen en el conjunto de datos.
+
+Para ello se ha utilizado herramientas de manipulación y visualización de datos para responder a estas preguntas de forma exploratoria.
+
+###Pregunta 1: Hora pico de acceso y día con mayor actividad
+
+Para responder a esta cuestión se partió de la variable temporal del dataset, que previamente fue transformada para separar fecha y hora y poder trabajarla correctamente.
+
+A partir de la hora de cada registro se agruparon los eventos por franjas horarias, contando cuántos accesos se producían en cada una. Esto permitió detectar la hora con mayor volumen de actividad (hora pico), que resultó ser las 9:00.
+
+Del mismo modo, a partir de la variable fecha, se extrajo el día de la semana de cada evento y se agruparon los registros según el día correspondiente. Esto permitió identificar que el miércoles es el día con más actividad registrada.
+
+Para representar los resultados se utilizaron gráficos de barras, ya que facilitan visualizar la distribución temporal de los eventos.  
+
+
+###Pregunta 2: Número total de eventos registrados
+
+Para esta parte del análisis se ha considerado que cada fila del dataset representa un evento o acción registrada en Moodle.
+
+A partir de ello se obtuvo el número total de eventos presentes en el conjunto de datos mediante el recuento de observaciones, resultando un total de 109.746 eventos.
+
+
+###Pregunta 3: Usuarios distintos y usuarios con mayor actividad
+
+En esta parte se analizó cuántos usuarios distintos aparecen en el conjunto de datos utilizando la variable correspondiente a usuario.
+
+Primero se calculó el número de usuarios únicos presentes en el dataset. Posteriormente, se realizó un recuento de eventos por usuario para observar diferencias en niveles de actividad y detectar qué usuarios concentraban un mayor número de registros.
+
+Como apoyo al análisis se incluyó una representación gráfica para visualizar mejor sus diferencias de actividad.
 
