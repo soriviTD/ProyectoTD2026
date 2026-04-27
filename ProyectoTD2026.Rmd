@@ -69,6 +69,7 @@ En cuanto a los tipos de datos, la fecha es Date y hora hms. El resto de ellas s
 A partir de este análisis inicial, surgen varias preguntas al reflexionar sobre qué aspectos de los datos son más relevantes para el análisis.
 
 Preguntas:
+
 1. ¿Cuál es la hora pico de acceso? ¿qué día de la semana hay más actividad?
 
 2. ¿Cuántos eventos totales hay?
@@ -124,4 +125,84 @@ knitr::kable(datos_tabla,
              caption = "Acciones realizadas por usuarios según fecha y hora", 
              booktabs = TRUE)
 ```
+
+
+Respuestas:
+
+1. ¿Cuál es la hora pico de acceso? ¿qué día de la semana hay más actividad?
+
+```{r}
+library(lubridate)
+library(dplyr)
+library(ggplot2)
+
+# Extraemos la hora (0-23) de cada evento
+eventos_hora <- data %>%
+  mutate(hora_dia = hour(Hora)) %>%
+  count(hora_dia)
+
+# Hora con más actividad
+hora_pico <- eventos_hora %>%
+  filter(n == max(n))
+
+hora_pico
+
+## la hora pico es a las 9:00 de la mañana con 16.192
+
+# Gráfico de eventos por hora
+ggplot(eventos_hora, aes(x = hora_dia, y = n)) +
+  geom_col(fill="steelblue") +
+  labs(
+    title="Eventos por hora del día",
+    x="Hora",
+    y="Número de eventos"
+  )
+
+```
+```{r}
+# Día de la semana con más actividad
+
+# Creamos variable día semana
+data$diasemana <- weekdays(data$Fecha)
+
+eventos_dia <- data %>%
+  count(diasemana) %>%
+  arrange(desc(n))
+
+eventos_dia
+
+# Día con mayor actividad
+dia_pico <- eventos_dia %>%
+  filter(n == max(n))
+
+dia_pico
+
+##El dia de la semana con mas actividad es el miercoles con 25.644 registros
+
+# Gráfico
+ggplot(eventos_dia,
+       aes(x=reorder(diasemana,-n), y=n)) +
+  geom_col(fill="darkred") +
+  labs(
+    title="Eventos por día de la semana",
+    x="Día",
+    y="Número de eventos"
+  )
+
+```
+
+2. ¿Cuántos eventos totales hay?
+
+```{r}
+
+```
+
+3. ¿Cuántos usuarios distintos aparecen?
+
+```{r}
+
+```
+
+
+
 
