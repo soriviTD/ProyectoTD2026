@@ -194,6 +194,11 @@ ggplot(eventos_dia,
 2. ¿Cuántos eventos totales hay?
 
 ```{r}
+# Cada fila es un evento, así que basta contar observaciones:
+
+data %>% summarise(total_eventos = n())
+
+# El conjunto de datos contiene un total de 109.746 eventos registrados en total
 
 ```
 
