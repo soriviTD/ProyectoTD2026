@@ -3,10 +3,10 @@ title: "ProyectoTD2026"
 author: "Andreu Fuentes Ponce, Mario Izquierdo Puchades, Sofia Rivera Vidal, Marta Sisternas Ruíz, Belinda Villalta Lillo"
 date: "2026-03-31"
 output:
-  bookdown::pdf_document2:
+  bookdown::html_document2:
     fig_caption: yes
     df_print: kable
-  bookdown::html_document2:
+  bookdown::pdf_document2:
     fig_caption: yes
     df_print: kable
 lang: es
@@ -28,6 +28,7 @@ library(dplyr)
 library(tidyverse)
 library(ggplot2)
 library(lubridate)
+library(hms)
 ```
 
 ```{r}
@@ -51,13 +52,11 @@ Antes de ser tratadas, todas la variables aparecen como categóricas de tipo car
 ```{r}
 #Corrección de la columna "Hora" para que tenga formato. División de esta en "Fecha" y "Hora".
 data$Hora <- dmy_hms(data$Hora)
-data <- data %>% mutate(Fecha = as_date(Hora)) %>% mutate(Hora = format(Hora, "%H:%M:%S"))
+data <- data %>% mutate(Fecha = as_date(Hora), Hora = format(Hora, "%H:%M:%S"))
 colnames(data)
 data <- subset(data, select=c(10, 1:9))
-View(data)
 
 #Convertimos Hora a hms en lugar de caracter
-library(hms)
 data$Hora <- as_hms(data$Hora)
 
 colnames(data)[3] <- 'Usuario'
@@ -236,6 +235,72 @@ ggplot(usuarios_top, aes(x = reorder(Usuario, n), y = n)) +
 En la Figura \@ref(fig:figura-usuariostop) se observan los tres usuarios con mayor actividad y sus registros
 
 
+
+
+```{r include=FALSE}
+frecuencias <- sort(table(data$Usuario), decreasing=TRUE)
+
+#Si se intenta encontrar a todos lo profesores, usando estos eventos, queda que únicamente hay nueve alumnos y el resto son profesores.
+#eventos_profesores <- c('Copia de curso creada', 'Módulo de curso actualizado', 'Usuario calificado', 'Se ha calificado el envío.', 'Calificación borrada', 'Evento de calendario actualizado', 'Todos los envíos se están descargando.', 'Usuario matriculado en el curso', 'Sección de curso eliminada', 'Sección de curso actualizado', 'Sección del curso creada', 'Curso creado')
+
+
+d_7 <- data[1:3]
+d_7 <- d_7[-2]
+
+df <- data.frame(Usuario = character(),
+                 Cant_accesos = numeric(), 
+                 Dia1 = as.Date(character()),
+                 DiaUlt = as.Date(character()),
+                 Dias_total = numeric(),
+                 Dias_neto = numeric(),
+                 stringsAsFactors = FALSE)
+
+usuarios <- unique(data$Usuario)
+
+for (i in 1:length(usuarios)){
+  d_7_1 <- d_7 %>% filter(Usuario == usuarios[i])
+  cant <- nrow(d_7_1)
+  primer <- d_7_1$Fecha[cant]
+  ult <- d_7_1$Fecha[1]
+  c_dias_neto <- nrow(distinct(d_71_2))
+  
+  df <- df %>% 
+  add_row(Usuario = usuarios[i],
+          Cant_accesos = cant,
+          Dia1 = primer,
+          DiaUlt = ult,
+          Dias_total = as.numeric(ult-primer)+1, #Esto es porque no está contando el propio día.
+          Dias_neto = c_dias_neto)
+}
+
+df_ej_7 <- df
+
+#Interacción media por día entre la primera entrada y la última.
+grafico_ej_7_1 <- ggplot(df, aes(x=Dias_total, y=Cant_accesos)) + geom_point()
+
+#Interacción media por día teniendo en cuenta únicamente los días en los que se ha entrado.
+grafico_ej_7_2 <- ggplot(df, aes(x=Dias_neto, y=Cant_accesos)) + geom_point()
+
+#Media de interacciones por usuario.
+
+```
+
+```{r include=FALSE}
+tabla_ej_9 <- sort(table(data$`Nombre evento`), decreasing = TRUE)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
 #Memoria del trabajo realizado
 ##Introducción
 
@@ -271,3 +336,48 @@ Primero se calculó el número de usuarios únicos presentes en el dataset. Post
 
 Como apoyo al análisis se incluyó una representación gráfica para visualizar mejor sus diferencias de actividad.
 
+
+### Pregunta 4: ¿Cómo ha evolucionado la actividad a lo largo de los meses?
+
+
+### Pregunta 5: ¿Hay actividad registrada en horarios atípicos (madrugada, festivos)?
+
+
+### Pregunta 6: ¿Predomina la consulta de recursos o la interacción activa?
+
+
+### Pregunta 7: Media de entrada por usuario. ¿Cuántas veces el que más y el que menos? ¿Primera y última vez?
+```{r echo=FALSE}
+grafico_ej_7_1
+grafico_ej_7_2
+```
+
+
+### Pregunta 8: ¿Cuántos intentos de cuestionario hace de media cada estudiante?
+
+
+### Pregunta 9: ¿Qué tipo de acciones son las más comunes?
+```{r}
+tabla_ej_9
+```
+
+
+### Pregunta 10: ¿Desde cuántas IPs distintas se conecta un mismo usuario? ¿Hay alguna ilógica?
+
+
+### Pregunta 11: ¿Existen IPs compartidas por muchos usuarios?
+
+
+### Pregunta 12: ¿Qué porcentaje de usuarios accede desde redes móviles y cuántos desde redes fijas?
+
+
+### Pregunta 13: ¿Cómo se distribuye la entrega de tareas?
+
+
+### Pregunta 14: ¿Cuál es la secuencia de acciones más habitual en una sesión?
+
+
+### Pregunta 15: ¿Cuánto tiempo pasa entre acciones relacionadas?
+
+
+### Pregunta 16: ¿Qué acciones conllevan acción sobre uno mismo? ¿Y sobre otro usuario?
