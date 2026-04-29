@@ -237,7 +237,7 @@ En la Figura \@ref(fig:figura-usuariostop) se observan los tres usuarios con may
 
 
 
-```{r include=FALSE}
+```{r Ejercicio 7, include=FALSE}
 frecuencias <- sort(table(data$Usuario), decreasing=TRUE)
 
 #Si se intenta encontrar a todos lo profesores, usando estos eventos, queda que únicamente hay nueve alumnos y el resto son profesores.
@@ -262,7 +262,7 @@ for (i in 1:length(usuarios)){
   cant <- nrow(d_7_1)
   primer <- d_7_1$Fecha[cant]
   ult <- d_7_1$Fecha[1]
-  c_dias_neto <- nrow(distinct(d_71_2))
+  c_dias_neto <- nrow(distinct(d_7_1))
   
   df <- df %>% 
   add_row(Usuario = usuarios[i],
@@ -282,11 +282,24 @@ grafico_ej_7_1 <- ggplot(df, aes(x=Dias_total, y=Cant_accesos)) + geom_point()
 grafico_ej_7_2 <- ggplot(df, aes(x=Dias_neto, y=Cant_accesos)) + geom_point()
 
 #Media de interacciones por usuario.
-
+grafico_ej_7_3 <- ggplot(df, aes(x=Usuario, y=Cant_accesos)) + geom_point()
 ```
 
-```{r include=FALSE}
-tabla_ej_9 <- sort(table(data$`Nombre evento`), decreasing = TRUE)
+```{r Ejercicio 8, include=FALSE}
+ #"Ha comenzado el intento"                         
+ #[49] "Intento abandonado"                              
+ #[50] "Tiempo límite del cuestionario excedido"  
+
+#data_8 <- data % filter(())
+  
+```
+
+
+```{r Ejercicio 9, include=FALSE}
+tabla <- sort(table(data$`Nombre evento`), decreasing = TRUE)
+tabla <- as.data.frame(tabla)
+colnames(tabla) <- c('Evento', 'Frecuencia')
+tabla_ej_9 <- tabla
 ```
 
 
@@ -337,47 +350,53 @@ Primero se calculó el número de usuarios únicos presentes en el dataset. Post
 Como apoyo al análisis se incluyó una representación gráfica para visualizar mejor sus diferencias de actividad.
 
 
-### Pregunta 4: ¿Cómo ha evolucionado la actividad a lo largo de los meses?
+###Pregunta 4: ¿Cómo ha evolucionado la actividad a lo largo de los meses?
 
 
-### Pregunta 5: ¿Hay actividad registrada en horarios atípicos (madrugada, festivos)?
+###Pregunta 5: ¿Hay actividad registrada en horarios atípicos (madrugada, festivos)?
 
 
-### Pregunta 6: ¿Predomina la consulta de recursos o la interacción activa?
+###Pregunta 6: ¿Predomina la consulta de recursos o la interacción activa?
 
 
-### Pregunta 7: Media de entrada por usuario. ¿Cuántas veces el que más y el que menos? ¿Primera y última vez?
+###Pregunta 7: Media de entrada por usuario. ¿Cuántas veces el que más y el que menos? ¿Primera y última vez?
 ```{r echo=FALSE}
 grafico_ej_7_1
 grafico_ej_7_2
+grafico_ej_7_3
 ```
 
 
-### Pregunta 8: ¿Cuántos intentos de cuestionario hace de media cada estudiante?
+###Pregunta 8: ¿Cuántos intentos de cuestionario hace de media cada estudiante?
+```{r echo=FALSE}
 
-
-### Pregunta 9: ¿Qué tipo de acciones son las más comunes?
-```{r}
-tabla_ej_9
 ```
 
 
-### Pregunta 10: ¿Desde cuántas IPs distintas se conecta un mismo usuario? ¿Hay alguna ilógica?
+###Pregunta 9: ¿Qué tipo de acciones son las más comunes?
+```{r echo=FALSE}
+knitr::kable(tabla_ej_9, 
+             caption = "Conteo de acciones realizadas", 
+             booktabs = TRUE)
+```
 
 
-### Pregunta 11: ¿Existen IPs compartidas por muchos usuarios?
+###Pregunta 10: ¿Desde cuántas IPs distintas se conecta un mismo usuario? ¿Hay alguna ilógica?
 
 
-### Pregunta 12: ¿Qué porcentaje de usuarios accede desde redes móviles y cuántos desde redes fijas?
+###Pregunta 11: ¿Existen IPs compartidas por muchos usuarios?
 
 
-### Pregunta 13: ¿Cómo se distribuye la entrega de tareas?
+###Pregunta 12: ¿Qué porcentaje de usuarios accede desde redes móviles y cuántos desde redes fijas?
 
 
-### Pregunta 14: ¿Cuál es la secuencia de acciones más habitual en una sesión?
+###Pregunta 13: ¿Cómo se distribuye la entrega de tareas?
 
 
-### Pregunta 15: ¿Cuánto tiempo pasa entre acciones relacionadas?
+###Pregunta 14: ¿Cuál es la secuencia de acciones más habitual en una sesión?
 
 
-### Pregunta 16: ¿Qué acciones conllevan acción sobre uno mismo? ¿Y sobre otro usuario?
+###Pregunta 15: ¿Cuánto tiempo pasa entre acciones relacionadas?
+
+
+###Pregunta 16: ¿Qué acciones conllevan acción sobre uno mismo? ¿Y sobre otro usuario?
