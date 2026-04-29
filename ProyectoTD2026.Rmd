@@ -304,10 +304,22 @@ tabla_ej_9 <- tabla
 
 
 
+```{r Ejercicio 13, include=FALSE}
+data_13 <- data %>%
+  count(`Nombre evento`) %>%
+  arrange(desc(n)) %>%
+  slice(1:10)
 
+data_13_grafico <- ggplot(data_13, aes(x = reorder(`Nombre evento`, n), y = n)) +
+  geom_bar(stat = "identity", fill = "blue") +
+  coord_flip() +
+  labs(title = "Top 10 Eventos más Frecuentes",
+       x = "Nombre del Evento",
+       y = "Número de Eventos")
 
-
-
+data_13_grafico
+  
+```
 
 
 
@@ -390,7 +402,11 @@ knitr::kable(tabla_ej_9,
 ###Pregunta 12: ¿Qué porcentaje de usuarios accede desde redes móviles y cuántos desde redes fijas?
 
 
-###Pregunta 13: ¿Cómo se distribuye la entrega de tareas?
+###Pregunta 13:  ¿Cuáles son los 10 eventos más frecuentes en el dataset?
+```{r}
+data_13_grafico
+```
+
 
 
 ###Pregunta 14: ¿Cuál es la secuencia de acciones más habitual en una sesión?
