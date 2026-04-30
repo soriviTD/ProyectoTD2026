@@ -392,12 +392,35 @@ grafico_ej_7_3 <- ggplot(df, aes(x=Usuario, y=Cant_accesos)) + geom_point()
 ```
 
 ```{r Ejercicio 8, include=FALSE}
- #"Ha comenzado el intento"                         
- #[49] "Intento abandonado"                              
- #[50] "Tiempo límite del cuestionario excedido"  
+d_8 <- data %>% filter(`Componente` == 'Cuestionario')
+unique(d_8$`Nombre evento`)
 
-#data_8 <- data % filter(())
-  
+#"Intento enviado", "Ha comenzado el intento", "Intento abandonado", "Tiempo límite del cuestionario excedido" 
+#d_8 <- data %>% 
+#  filter(str_detect(`Nombre evento`, '[Ii]ntento|exc'),
+#  !str_detect(`Nombre evento`, '[Vv]is|ac|ti[ec]|ca'))
+
+#unique(d_8$`Nombre evento`)
+
+d_8 <- data[,-(8:10)]
+d_8 <- d_8[,-6]
+
+#Media de cuestionarios por usuario.
+d_8_1 <- d_8 %>% filter(`Nombre evento` == 'Ha comenzado el intento')
+cant_cuestionarios <- length(unique(d_8_1$`Contexto del evento`))
+d_8_1 <- d_8_1 %>%
+  group_by(Usuario) %>%
+  summarize(Intentos = n())
+ggplot(d_8_1, aes(x=Usuario, y=Intentos/cant_cuestionarios)) + geom_point()
+
+
+#Cuestionarios con número total de intentos.
+d_8_2 <- 
+#% de cuestionarios no enviados
+
+#Cantidad de cuestionarios abandonados.
+
+#Cantidad de cuestionarios a los que se les ha acabado el tiempo.
 ```
 
 
