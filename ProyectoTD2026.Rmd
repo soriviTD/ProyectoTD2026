@@ -423,11 +423,24 @@ data_13_grafico <- ggplot(data_13, aes(x = reorder(`Nombre evento`, n), y = n)) 
        x = "Nombre del Evento",
        y = "Número de Eventos")
 
-data_13_grafico
   
 ```
 
+```{r Ejercicio 14, include=FALSE}
+data_14 <- data %>%
+  filter(Componente == "Tarea") %>%
+  group_by(`Contexto del evento`) %>%
+  summarise(Distintos = n_distinct(Usuario))
 
+data_14_grafico <- ggplot(data_14, aes(x = reorder(`Contexto del evento`, Distintos), y = Distintos)) +
+  geom_bar(stat = "identity", fill = "blue") +
+  coord_flip() +
+  labs(title = "Usuarios distintos por Tarea",
+       x = "Tarea",
+       y = "Usuarios distintos")
+
+  
+```
 
 
 
@@ -523,6 +536,10 @@ data_13_grafico
 
 
 ###Pregunta 14: ¿Cuál es la secuencia de acciones más habitual en una sesión?
+```{r}
+data_14
+data_14_grafico
+```
 
 
 ###Pregunta 15: ¿Cuánto tiempo pasa entre acciones relacionadas?
