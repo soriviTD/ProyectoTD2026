@@ -3,10 +3,10 @@ title: "ProyectoTD2026"
 author: "Andreu Fuentes Ponce, Mario Izquierdo Puchades, Sofia Rivera Vidal, Marta Sisternas Ruíz, Belinda Villalta Lillo"
 date: "2026-03-31"
 output:
-  bookdown::html_document2:
+  bookdown::pdf_document2:
     fig_caption: yes
     df_print: kable
-  bookdown::pdf_document2:
+  bookdown::html_document2:
     fig_caption: yes
     df_print: kable
 lang: es
@@ -372,11 +372,18 @@ Como apoyo al análisis se incluyó una representación gráfica para visualizar
 
 
 ###Pregunta 7: Media de entrada por usuario. ¿Cuántas veces el que más y el que menos? ¿Primera y última vez?
+
 ```{r echo=FALSE}
 grafico_ej_7_1
 grafico_ej_7_2
+```
+
+Viendo este gráfico se puede observar que la mayoría de los alumnos se han conectado la mitad de los días que han tenido acceso (entendiendo esto como los días desde el primer acceso hasta el último). Además se puede ver que en ambos casos el usuario con más accesos es también el que más días ha tenido acceso. Pese a esto, contabilizando únicamente los días que realmente ha accedido a la página, se puede ver que ha accedido más o menos la misma cantidad de días que la media de los usuarios pero ha realizado muchas más acciones.
+
+```{r}
 grafico_ej_7_3
 ```
+
 
 
 ###Pregunta 8: ¿Cuántos intentos de cuestionario hace de media cada estudiante?
