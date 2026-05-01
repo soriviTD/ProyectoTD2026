@@ -608,7 +608,7 @@ data_15_grafico
 ```
 
 
-###Pregunta 16: ¿Qué acciones conllevan acción sobre uno mismo? ¿Y sobre otro usuario?
+###Pregunta 16: ¿Qué componentes generan más interacciones entre usuarios (usuario afectado distinto del usuario que realiza la acción)?
 ```{r}
 data_16
 data_16_grafico
