@@ -415,7 +415,7 @@ ggplot(d_8_1, aes(x=Usuario, y=Intentos/cant_cuestionarios)) + geom_point()
 
 
 #Cuestionarios con número total de intentos.
-d_8_2 <- 
+#d_8_2 
 #% de cuestionarios no enviados
 
 #Cantidad de cuestionarios abandonados.
@@ -465,7 +465,29 @@ data_14_grafico <- ggplot(data_14, aes(x = reorder(`Contexto del evento`, Distin
   
 ```
 
+```{r Ejercicio 15, include=FALSE}
+data_15 <- data %>%
+  mutate(Afectado = ifelse(is.na(Usuario_afectado), 
+                           "Sin usuario afectado", 
+                           "Con usuario afectado")) %>%
+  count(Afectado)%>%
+  mutate(porcentaje = round(n / sum(n) * 100, 1),
+         etiqueta = paste0(porcentaje, "%"))
 
+data_15_grafico <- ggplot(data_15, aes(x = "", y = n, fill = Afectado)) +
+  geom_bar(stat = "identity", width = 1) +
+  coord_polar("y") +
+  geom_text(aes(label = etiqueta), position = position_stack(vjust = 0.5)) +
+  labs(title = "Eventos con y sin usuario afectado",
+       fill = "Tipo") +
+  theme_void()
+  
+```
+
+
+```{r}
+data_16 <- data %>%
+```
 
 
 #Memoria del trabajo realizado
@@ -558,14 +580,20 @@ data_13_grafico
 
 
 
-###Pregunta 14: ¿Cuál es la secuencia de acciones más habitual en una sesión?
+###Pregunta 14: ¿Cuántos usuarios distintos han interactuado con cada tarea del curso?
 ```{r}
 data_14
 data_14_grafico
 ```
 
 
-###Pregunta 15: ¿Cuánto tiempo pasa entre acciones relacionadas?
+###Pregunta 15: ¿Cuantos eventos tienen usuario afectado y cuántos no?
+
+```{r}
+data_15
+data_15_grafico
+```
 
 
 ###Pregunta 16: ¿Qué acciones conllevan acción sobre uno mismo? ¿Y sobre otro usuario?
+
