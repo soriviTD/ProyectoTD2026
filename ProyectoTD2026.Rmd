@@ -487,6 +487,19 @@ data_15_grafico <- ggplot(data_15, aes(x = "", y = n, fill = Afectado)) +
 
 ```{r}
 data_16 <- data %>%
+  filter(!is.na(Usuario_afectado)) %>%
+  filter(Usuario_afectado != Usuario) %>%
+  group_by(Componente) %>%
+  summarise(interacciones = n()) %>%
+  slice(1:10) %>%
+  arrange(desc(interacciones))
+
+data_16_grafico <-ggplot(data_16, aes(x = reorder(Componente, interacciones), y = interacciones)) + 
+  geom_bar(stat = "identity", fill = "red") +
+  labs(title = "Top 10 componentes que generan mas interacciones entre usuarios",
+         x = "Componentes",
+         y = "Num. interacciones")
+  
 ```
 
 
@@ -596,4 +609,8 @@ data_15_grafico
 
 
 ###Pregunta 16: ¿Qué acciones conllevan acción sobre uno mismo? ¿Y sobre otro usuario?
+```{r}
+data_16
+data_16_grafico
+```
 
