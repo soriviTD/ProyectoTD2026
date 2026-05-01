@@ -408,19 +408,26 @@ d_8 <- d_8[,-6]
 #Media de cuestionarios por usuario.
 d_8_1 <- d_8 %>% filter(`Nombre evento` == 'Ha comenzado el intento')
 cant_cuestionarios <- length(unique(d_8_1$`Contexto del evento`))
-d_8_1 <- d_8_1 %>%
+d_8_11 <- d_8_1 %>%
   group_by(Usuario) %>%
   summarize(Intentos = n())
-ggplot(d_8_1, aes(x=Usuario, y=Intentos/cant_cuestionarios)) + geom_point()
-
+ggplot(d_8_11, aes(x=Usuario, y=Intentos/cant_cuestionarios)) + geom_point() + scale_x_discrete(label = NULL) + theme(axis.ticks = element_blank()) 
 
 #Cuestionarios con número total de intentos.
-#d_8_2 
-#% de cuestionarios no enviados
+d_8_2 <- d_8_1 %>%
+  group_by(`Contexto del evento`) %>%
+  summarize(Intentos = n())
+n <- d_8_2$`Contexto del evento`
+n <- gsub('[Cc]uestionario|:| +', '', n)
+ggplot(d_8_2, aes(x=str_remove(`Contexto del evento`, 'Cuestionario: '), y=Intentos)) + geom_point() + theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) + scale_x_discrete(label = n)
 
 #Cantidad de cuestionarios abandonados.
+d_8_3 <- d_8 %>% filter(`Nombre evento` == 'Intento abandonado')
+nrow(d_8_3)
 
 #Cantidad de cuestionarios a los que se les ha acabado el tiempo.
+d_8_4 <- d_8 %>% filter(`Nombre evento` == 'Tiempo límite del cuestionario excedido')
+nrow(d_8_4)
 ```
 
 
