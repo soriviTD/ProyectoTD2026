@@ -261,9 +261,17 @@ ggplot(eventos_hora, aes(x = hora_dia, y = n)) +
     x="Hora",
     y="Número de eventos"
   )
-
 ```
 En la Figura \@ref(fig:figura-horapico) se observa que la hora pico de acceso es las 9:00 con 16192.
+
+```{r Agregado pregunta 1}
+d <- data %>% filter(`Componente` == 'Asistencia')
+unique(d$`Nombre evento`)
+d <- d %>% filter(str_detect(`Nombre evento`, 'co'))
+unique(d$`Nombre evento`)
+
+ggplot(d, aes(x=Hora)) + geom_histogram()
+```
 
 
 ```{r figura-diasemana, fig.cap="Eventos por día de la semana"}
