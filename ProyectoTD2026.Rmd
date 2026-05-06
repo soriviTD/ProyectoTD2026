@@ -129,6 +129,7 @@ authorcitation: |
 
 
 ```{r Librerías, include=FALSE}
+if (!require("pacman")) install.packages("pacman")
 library(pacman)
 pacman::p_load(readr, dplyr, tidyverse, ggplot2, lubridate, hms)
 ```
@@ -204,40 +205,12 @@ vez?
 
 16. ¿Qué acciones conllevan acción sobre uno mismo? ¿Y sobre otro usuario?
 
-```{r figura-eventos, fig.cap = "Distribución de eventos por hora del día"}
-data %>% 
-  mutate(hora_dia = hour(Hora)) %>%
-  count(hora_dia) %>%
-  ggplot(aes(hora_dia, n)) + geom_bar(stat = "identity", fill = "red") +
-  labs(title = "EVENTOS POR HORA DEL DÍA",
-       x = "Hora del Dia(0-23)",
-       y = "Numero de Eventos",
-       caption = "La hora del día con más eventos es a las 9:00 con más de 15000 eventos")
-```
-
-En la Figura \@ref(fig:figura-eventos) se puede observar la distribución de eventos a lo largo del día, donde destaca una mayor actividad durante las horas de la mañana, especialmente a las 9:00.
-
-```{r}
-datos_tabla <- data %>%
-  head(5) %>%
-  select(Fecha, Hora, Usuario, Componente)
-
-knitr::kable(datos_tabla, 
-             caption = "Acciones realizadas por usuarios según fecha y hora", 
-             booktabs = TRUE)
-```
-
-
 
 Respuestas:
 
 1. ¿Cuál es la hora pico de acceso? ¿qué día de la semana hay más actividad?
 
 ```{r figura-horapico, fig.cap="Distribución de eventos por hora del día"}
-library(lubridate)
-library(dplyr)
-library(ggplot2)
-
 # Extraemos la hora (0-23) de cada evento
 eventos_hora <- data %>%
   mutate(hora_dia = hour(Hora)) %>%
@@ -438,7 +411,7 @@ cant_cuestionarios <- length(unique(d_8_1$`Contexto del evento`))
 d_8_11 <- d_8_1 %>%
   group_by(Usuario) %>%
   summarize(Intentos = n())
-ggplot(d_8_11, aes(x=Usuario, y=Intentos/cant_cuestionarios)) + geom_point() + scale_x_discrete(label = NULL) + theme(axis.ticks = element_blank()) 
+grafico_ej_8_1 <- ggplot(d_8_11, aes(x=Usuario, y=Intentos/cant_cuestionarios)) + geom_point() + scale_x_discrete(label = NULL) + theme(axis.ticks = element_blank()) 
 
 #Cuestionarios con número total de intentos.
 d_8_2 <- d_8_1 %>%
@@ -446,7 +419,7 @@ d_8_2 <- d_8_1 %>%
   summarize(Intentos = n())
 n <- d_8_2$`Contexto del evento`
 n <- gsub('[Cc]uestionario|:| +', '', n)
-ggplot(d_8_2, aes(x=str_remove(`Contexto del evento`, 'Cuestionario: '), y=Intentos)) + geom_point() + theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) + scale_x_discrete(label = n)
+grafico_ej_8_2 <- ggplot(d_8_2, aes(x=str_remove(`Contexto del evento`, 'Cuestionario: '), y=Intentos)) + geom_point() + theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) + scale_x_discrete(label = n)
 
 #Cantidad de cuestionarios abandonados.
 d_8_3 <- d_8 %>% filter(`Nombre evento` == 'Intento abandonado')
@@ -457,13 +430,13 @@ d_8_4 <- d_8 %>% filter(`Nombre evento` == 'Tiempo límite del cuestionario exce
 nrow(d_8_4)
 ```
 
-
 ```{r Ejercicio 9, include=FALSE}
 tabla <- sort(table(data$`Nombre evento`), decreasing = TRUE)
 tabla <- as.data.frame(tabla)
 colnames(tabla) <- c('Evento', 'Frecuencia')
 tabla_ej_9 <- tabla
 ```
+
 
 
 
@@ -583,24 +556,35 @@ Como apoyo al análisis se incluyó una representación gráfica para visualizar
 
 
 ###Pregunta 7: Media de entrada por usuario. ¿Cuántas veces el que más y el que menos? ¿Primera y última vez?
-
-```{r echo=FALSE}
+```{r p7_1, echo=FALSE}
 grafico_ej_7_1
+```
+En la figura \@ref(fig:p7_1) se muestra un grafico con la cantidad dias que se ha tenido acceso frente a la cantidad de accesos.
+
+```{r p7_2, echo=FALSE}
 grafico_ej_7_2
 ```
+En la figura \@ref(fig:p7_2) se ven los días que se han accedido frente a la cantidad de interacciones.
 
 Viendo este gráfico se puede observar que la mayoría de los alumnos se han conectado la mitad de los días que han tenido acceso (entendiendo esto como los días desde el primer acceso hasta el último). Además se puede ver que en ambos casos el usuario con más accesos es también el que más días ha tenido acceso. Pese a esto, contabilizando únicamente los días que realmente ha accedido a la página, se puede ver que ha accedido más o menos la misma cantidad de días que la media de los usuarios pero ha realizado muchas más acciones.
 
-```{r}
+```{r p7_3, echo=FALSE}
 grafico_ej_7_3
 ```
-
+En la figura \@ref(fig:p7_3) se observa la cantidad de accesos según el usuario.
 
 
 ###Pregunta 8: ¿Cuántos intentos de cuestionario hace de media cada estudiante?
-```{r echo=FALSE}
-
+```{r p8_1, echo=FALSE}
+grafico_ej_8_1
 ```
+En la figura \@ref(fig:p8_1) se muestra un grafico con la cantidad de intentos por cuestionario realizados por cada usuario.
+
+```{r p8_2, echo=FALSE}
+grafico_ej_8_2
+```
+En la figura \@ref(fig:p8_2) se observa la cantidad de intentos realizados por cada cuestionario.
+
 
 
 ###Pregunta 9: ¿Qué tipo de acciones son las más comunes?
