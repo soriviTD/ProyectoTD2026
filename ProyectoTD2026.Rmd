@@ -128,13 +128,9 @@ authorcitation: |
 ---
 
 
-```{r}
-library(readr)
-library(dplyr)
-library(tidyverse)
-library(ggplot2)
-library(lubridate)
-library(hms)
+```{r Librerías, include=FALSE}
+library(pacman)
+pacman::p_load(readr, dplyr, tidyverse, ggplot2, lubridate, hms)
 ```
 
 ```{r}
