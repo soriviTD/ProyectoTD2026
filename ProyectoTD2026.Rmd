@@ -49,7 +49,7 @@ library(pacman)
 pacman::p_load(readr, dplyr, tidyverse, ggplot2, lubridate, hms)
 ```
 
-```{r}
+```{r include=FALSE}
 #Carga de datos
 data <- read_csv("data/logs_moodle_anon.csv")
 
@@ -67,7 +67,7 @@ El dataset está compuesto por un total de 109.746 observaciones (filas) y 10 va
 Las variables incluidas en el conjunto de datos son: Hora, Nombre completo del usuario, Usuario afectado, Contexto del evento, Componente y Nombre evento, Descripción, Origen, y Dirección IP.
 Antes de ser tratadas, todas la variables aparecen como categóricas de tipo carácter (character).
 
-```{r}
+```{r include=FALSE}
 #Corrección de la columna "Hora" para que tenga formato. División de esta en "Fecha" y "Hora".
 data$Hora <- dmy_hms(data$Hora)
 data <- data %>% mutate(Fecha = as_date(Hora), Hora = format(Hora, "%H:%M:%S"))
@@ -121,11 +121,9 @@ vez?
 16. ¿Qué acciones conllevan acción sobre uno mismo? ¿Y sobre otro usuario?
 
 
-Respuestas:
 
-1. ¿Cuál es la hora pico de acceso? ¿qué día de la semana hay más actividad?
-
-```{r figura-horapico, fig.cap="Distribución de eventos por hora del día"}
+```{r figura-horapico, fig.cap="Distribución de eventos por hora del día", include=FALSE}
+#1. ¿Cuál es la hora pico de acceso? ¿qué día de la semana hay más actividad?
 # Extraemos la hora (0-23) de cada evento
 eventos_hora <- data %>%
   mutate(hora_dia = hour(Hora)) %>%
@@ -145,10 +143,11 @@ ggplot(eventos_hora, aes(x = hora_dia, y = n)) +
     x="Hora",
     y="Número de eventos"
   )
+#En la Figura \@ref(fig:figura-horapico) se observa que la hora pico de acceso es las 9:00 con 16192.
 ```
-En la Figura \@ref(fig:figura-horapico) se observa que la hora pico de acceso es las 9:00 con 16192.
 
-```{r Agregado pregunta 1}
+
+```{r Agregado pregunta 1, include=FALSE}
 
 d <- data %>% filter(`Componente` == 'Asistencia')
 unique(d$`Nombre evento`)
@@ -181,7 +180,7 @@ ggplot(d, aes(x = Hora)) +  geom_histogram(
 ```
 
 
-```{r figura-diasemana, fig.cap="Eventos por día de la semana"}
+```{r figura-diasemana, fig.cap="Eventos por día de la semana", include=FALSE}
 # Día de la semana con más actividad
 
 # Creamos variable día semana
@@ -210,14 +209,15 @@ ggplot(eventos_dia,
     x="Día",
     y="Número de eventos"
   )
-
+#En la Figura \@ref(fig:figura-diasemana) se puede observar que el día con mayor actividad es el miércoles, con 25.644 registros.
 ```
 
-En la Figura \@ref(fig:figura-diasemana) se puede observar que el día con mayor actividad es el miércoles, con 25.644 registros.
 
-2. ¿Cuántos eventos totales hay?
 
-```{r}
+
+
+```{r include=FALSE}
+#2. ¿Cuántos eventos totales hay?
 # Cada fila es un evento, así que basta contar observaciones:
 
 data %>% summarise(total_eventos = n())
@@ -226,9 +226,10 @@ data %>% summarise(total_eventos = n())
 
 ```
 
-3. ¿Cuántos usuarios distintos aparecen?
 
-```{r figura-usuariostop, fig.cap="Top 3 usuarios con más actividad"}
+
+```{r figura-usuariostop, fig.cap="Top 3 usuarios con más actividad", include=FALSE}
+#3. ¿Cuántos usuarios distintos aparecen?
 usuarios_distintos <- data %>%
   summarise(total_usuarios = n_distinct(Usuario))
 
@@ -251,9 +252,9 @@ ggplot(usuarios_top, aes(x = reorder(Usuario, n), y = n)) +
     x="Usuario",
     y="Número de eventos"
   )
-
+#En la Figura \@ref(fig:figura-usuariostop) se observan los tres usuarios con mayor actividad y sus registros
 ```
-En la Figura \@ref(fig:figura-usuariostop) se observan los tres usuarios con mayor actividad y sus registros
+
 
 
 
@@ -407,7 +408,7 @@ data_15_grafico <- ggplot(data_15, aes(x = "", y = n, fill = Afectado)) +
 ```
 
 
-```{r}
+```{r include=FALSE}
 data_16 <- data %>%
   filter(!is.na(Usuario_afectado)) %>%
   filter(Usuario_afectado != Usuario) %>%
@@ -471,34 +472,34 @@ Como apoyo al análisis se incluyó una representación gráfica para visualizar
 
 
 ###Pregunta 7: Media de entrada por usuario. ¿Cuántas veces el que más y el que menos? ¿Primera y última vez?
-```{r p7_1, echo=FALSE}
+```{r p7-1, fig.cap = 'Accesos/Dias', echo=FALSE}
 grafico_ej_7_1
 ```
-En la figura \@ref(fig:p7_1) se muestra un grafico con la cantidad dias que se ha tenido acceso frente a la cantidad de accesos.
+En la figura \@ref(fig:p7-1) se muestra un grafico con la cantidad dias que se ha tenido acceso frente a la cantidad de accesos.
 
-```{r p7_2, echo=FALSE}
+```{r p7-2, fig.cap = 'Accesos/Dias(neto)', echo=FALSE}
 grafico_ej_7_2
 ```
-En la figura \@ref(fig:p7_2) se ven los días que se han accedido frente a la cantidad de interacciones.
+En la figura \@ref(fig:p7-2) se ven los días que se han accedido frente a la cantidad de interacciones.
 
 Viendo este gráfico se puede observar que la mayoría de los alumnos se han conectado la mitad de los días que han tenido acceso (entendiendo esto como los días desde el primer acceso hasta el último). Además se puede ver que en ambos casos el usuario con más accesos es también el que más días ha tenido acceso. Pese a esto, contabilizando únicamente los días que realmente ha accedido a la página, se puede ver que ha accedido más o menos la misma cantidad de días que la media de los usuarios pero ha realizado muchas más acciones.
 
-```{r p7_3, echo=FALSE}
+```{r p7-3, fig.cap = 'Accesos/Usuario', echo=FALSE}
 grafico_ej_7_3
 ```
-En la figura \@ref(fig:p7_3) se observa la cantidad de accesos según el usuario.
+En la figura \@ref(fig:p7-3) se observa la cantidad de accesos según el usuario.
 
 
 ###Pregunta 8: ¿Cuántos intentos de cuestionario hace de media cada estudiante?
-```{r p8_1, echo=FALSE}
+```{r p8-1, fig.cap = 'Intentos_cuestionario/Usuario', echo=FALSE}
 grafico_ej_8_1
 ```
-En la figura \@ref(fig:p8_1) se muestra un grafico con la cantidad de intentos por cuestionario realizados por cada usuario.
+En la figura \@ref(fig:p8-1) se muestra un grafico con la cantidad de intentos por cuestionario realizados por cada usuario.
 
-```{r p8_2, echo=FALSE}
+```{r p8-2, fig.cap = 'Intentos/Cuestionario', echo=FALSE}
 grafico_ej_8_2
 ```
-En la figura \@ref(fig:p8_2) se observa la cantidad de intentos realizados por cada cuestionario.
+En la figura \@ref(fig:p8-2) se observa la cantidad de intentos realizados por cada cuestionario.
 
 
 
@@ -520,14 +521,14 @@ knitr::kable(tabla_ej_9,
 
 
 ###Pregunta 13:  ¿Cuáles son los 10 eventos más frecuentes en el dataset?
-```{r}
+```{r echo=FALSE}
 data_13_grafico
 ```
 
 
 
 ###Pregunta 14: ¿Cuántos usuarios distintos han interactuado con cada tarea del curso?
-```{r}
+```{r echo=FALSE}
 data_14
 data_14_grafico
 ```
@@ -535,14 +536,14 @@ data_14_grafico
 
 ###Pregunta 15: ¿Cuantos eventos tienen usuario afectado y cuántos no?
 
-```{r}
+```{r echo=FALSE}
 data_15
 data_15_grafico
 ```
 
 
 ###Pregunta 16: ¿Qué componentes generan más interacciones entre usuarios (usuario afectado distinto del usuario que realiza la acción)?
-```{r}
+```{r echo=FALSE}
 data_16
 data_16_grafico
 ```
