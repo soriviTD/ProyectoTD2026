@@ -470,40 +470,23 @@ Como apoyo al análisis se incluyó una representación gráfica para visualizar
 
 ###Pregunta 7: Media de entrada por usuario. ¿Cuántas veces el que más y el que menos? ¿Primera y última vez?
 
-\ref{fig:fig1}
 \ref{fig:fig2}
+\ref{fig:fig3}
 
-
-
-
-```{r fig1, echo=FALSE, fig.width=3, fig.cap="A figure added with a code chunk.\\label{fig:fig1}"}
-x = rnorm(10)
-y = rnorm(10)
-plot(x, y)
-```
 
 ```{r fig2, echo=FALSE, fig.cap="A figure added with a code chunk.\\label{fig:fig2}"}
 grafico_ej_7_1 + grafico_ej_7_2
 ```
+
 En la figura Figure \ref{fig:fig2} se muestra un grafico con la cantidad dias que se ha tenido acceso frente a la cantidad de accesos.
-
-
-
-
-
-
-
-```{r p7-2, fig.cap = 'Accesos/Dias(neto)', echo=FALSE}
-grafico_ej_7_2
-```
-En la figura \@ref(fig:p7-2) se ven los días que se han accedido frente a la cantidad de interacciones.
 
 Viendo este gráfico se puede observar que la mayoría de los alumnos se han conectado la mitad de los días que han tenido acceso (entendiendo esto como los días desde el primer acceso hasta el último). Además se puede ver que en ambos casos el usuario con más accesos es también el que más días ha tenido acceso. Pese a esto, contabilizando únicamente los días que realmente ha accedido a la página, se puede ver que ha accedido más o menos la misma cantidad de días que la media de los usuarios pero ha realizado muchas más acciones.
 
-```{r p7-3, fig.cap = 'Accesos/Usuario', echo=FALSE}
+```{r fig3, echo=FALSE, fig.cap="A figure added with a code chunk.\\label{fig:fig3}"}
 grafico_ej_7_3
 ```
-En la figura \@ref(fig:p7-3) se observa la cantidad de accesos según el usuario.
+
+En la figura \@ref(fig:fig3) se observa la cantidad de accesos según el usuario.
 
 
 ###Pregunta 8: ¿Cuántos intentos de cuestionario hace de media cada estudiante?
