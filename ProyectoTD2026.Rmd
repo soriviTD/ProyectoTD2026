@@ -348,7 +348,7 @@ nrow(d_8_4)
 tabla <- sort(table(data$`Nombre evento`), decreasing = TRUE)
 tabla <- as.data.frame(tabla)
 colnames(tabla) <- c('Evento', 'Frecuencia')
-tabla_ej_9 <- tabla
+tabla_ej_9 <- head(tabla, 10)
 ```
 
 
@@ -474,11 +474,9 @@ Como apoyo al análisis se incluyó una representación gráfica para visualizar
 \ref{fig:fig3}
 
 
-```{r fig2, echo=FALSE, fig.cap="A figure added with a code chunk.\\label{fig:fig2}"}
+```{r fig2, echo=FALSE, fig.cap="Comparación entre días totales y únicamente los de acceso.\\label{fig:fig2}"}
 grafico_ej_7_1 + grafico_ej_7_2
 ```
-
-En la figura Figure \ref{fig:fig2} se muestra un grafico con la cantidad dias que se ha tenido acceso frente a la cantidad de accesos.
 
 Viendo este gráfico se puede observar que la mayoría de los alumnos se han conectado la mitad de los días que han tenido acceso (entendiendo esto como los días desde el primer acceso hasta el último). Además se puede ver que en ambos casos el usuario con más accesos es también el que más días ha tenido acceso. Pese a esto, contabilizando únicamente los días que realmente ha accedido a la página, se puede ver que ha accedido más o menos la misma cantidad de días que la media de los usuarios pero ha realizado muchas más acciones.
 
@@ -496,7 +494,7 @@ grafico_ej_8_1
 ```
 En la figura \@ref(fig:p8-1) se muestra un grafico con la cantidad de intentos por cuestionario realizados por cada usuario.
 
-```{r p8-2, fig.cap = 'Intentos/Cuestionario', echo=FALSE}
+```{r p8-2, fig.cap = 'Intentos por cuestionario', echo=FALSE}
 grafico_ej_8_2
 ```
 En la figura \@ref(fig:p8-2) se observa la cantidad de intentos realizados por cada cuestionario.
