@@ -368,6 +368,18 @@ d_11 <- data %>%
   arrange(desc(`Numero Usuarios`))
 ```
 
+```{r Ejercicio 12, include = FALSE}
+#Damos por cierto que los usuarios que acceden por redes moviles usan IPv6 y los usuarios que acceden mediante redes fijas lo hacen con una IPv4. Ya que esta situacion es la mas probable.
+
+#Las IPv6 tienen la estructura separada mediante : y las IPv4 mediante "." por lo que usaremos este criterio para decidir el tipo de IP
+
+d_12 <- data %>%
+  mutate(`Tipo IP` = ifelse(str_detect(`Dirección IP`, ":"), "IPv6", "IPv4")) %>% 
+  drop_na(`Dirección IP`) %>% 
+  count(`Tipo IP`) %>%
+  mutate(porcentaje = n / sum(n))
+```
+
 
 ```{r Ejercicio 13, include=FALSE}
 data_13 <- data %>%
