@@ -7,24 +7,23 @@ author:
 - name: Marta Sisternas Ruíz
 - name: Belinda Villalta Lillo
 output:
+  bookdown::pdf_document2: default
+  bookdown::html_document2: default
   rticles::mdpi_article:
     extra_dependencies: longtable
-  bookdown::html_document2: default
 journal: notspecified
 type: article
 status: submit
 simplesummary: |
   En este proyecto de Tratamiento de los Datos se explora un conjunto de datos
   real con el fin de extraer información, cuanto menos interesante, de ellos.
-abstract: |
-  El propósito de este estudio es conocer las actitudes y los patrones de los
-  usuarios de la plataforma durante el curso. Hemos utilizado principalmente los
-  recursos aprendidos en el aula. Hemos podido concluir que la mayoría de los
-  alumnos se comportan de manera similar, siendo que ninguno destaca 
-  excepcionalmente sobre la media.
-keywords: |
-  keyword 1; keyword 2; keyword 3 (list three to ten pertinent keywords specific 
-  to the article, yet reasonably common within the subject discipline.).
+abstract: "El propósito de este estudio es conocer las actitudes y los patrones de
+  los\nusuarios de la plataforma durante el curso. Hemos utilizado principalmente
+  los\nrecursos aprendidos en el aula. Hemos podido concluir que la mayoría de los\nalumnos
+  se comportan de manera similar, siendo que ninguno destaca \nexcepcionalmente sobre
+  la media.\n"
+keywords: "keyword 1; keyword 2; keyword 3 (list three to ten pertinent keywords specific
+  \nto the article, yet reasonably common within the subject discipline.).\n"
 abbreviations:
 - short: MDPI
   long: Multidisciplinary Digital Publishing Institute
@@ -351,7 +350,23 @@ colnames(tabla) <- c('Evento', 'Frecuencia')
 tabla_ej_9 <- head(tabla, 10)
 ```
 
+```{r Ejercicio 10,include = FALSE}
+d_10 <- data %>%
+  select(Usuario,`Dirección IP`) %>% 
+  drop_na() %>%
+  group_by(Usuario) %>%
+  summarise(IPs = n_distinct(`Dirección IP`)) %>%
+  arrange(desc(IPs))
+```
 
+```{r Ejercicio 11,include = FALSE}
+d_11 <- data %>%
+  select(Usuario,`Dirección IP`) %>%
+  drop_na() %>%
+  group_by(`Dirección IP`) %>%
+  summarise(`Numero Usuarios` = n_distinct(Usuario)) %>%
+  arrange(desc(`Numero Usuarios`))
+```
 
 
 ```{r Ejercicio 13, include=FALSE}
@@ -511,6 +526,7 @@ knitr::kable(tabla_ej_9,
 
 
 ###Pregunta 10: ¿Desde cuántas IPs distintas se conecta un mismo usuario? ¿Hay alguna ilógica?
+
 
 
 ###Pregunta 11: ¿Existen IPs compartidas por muchos usuarios?
