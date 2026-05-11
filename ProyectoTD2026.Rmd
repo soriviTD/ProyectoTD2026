@@ -135,7 +135,7 @@ hora_pico <- eventos_hora %>%
 hora_pico
 
 # Gráfico de eventos por hora
-ggplot(eventos_hora, aes(x = hora_dia, y = n)) +
+horaPico<- ggplot(eventos_hora, aes(x = hora_dia, y = n)) +
   geom_col(fill="steelblue") +
   labs(
     title="Eventos por hora del día",
@@ -143,6 +143,9 @@ ggplot(eventos_hora, aes(x = hora_dia, y = n)) +
     y="Número de eventos"
   )
 #En la Figura \@ref(fig:figura-horapico) se observa que la hora pico de acceso es las 9:00 con 16192.
+ 
+
+
 ```
 
 
@@ -154,7 +157,7 @@ unique(d$`Nombre evento`)
 d <- d %>% filter(str_detect(`Nombre evento`, 'co'))
 unique(d$`Nombre evento`)
 
-ggplot(d, aes(x = Hora)) +  geom_histogram(
+Asistencia<- ggplot(d, aes(x = Hora)) +  geom_histogram(
     binwidth = 60 * 10,
     fill = "#4F46E5",
     color = "white",
@@ -175,7 +178,6 @@ ggplot(d, aes(x = Hora)) +  geom_histogram(
     axis.title = element_text(face = "bold"),
     panel.grid.minor = element_blank()
   )
-
 ```
 
 
@@ -200,7 +202,7 @@ dia_pico
 ##El dia de la semana con mas actividad es el miercoles con 25.644 registros
 
 # Gráfico
-ggplot(eventos_dia,
+eventosdia<- ggplot(eventos_dia,
        aes(x=reorder(diasemana,-n), y=n)) +
   geom_col(fill="darkred") +
   labs(
@@ -208,7 +210,7 @@ ggplot(eventos_dia,
     x="Día",
     y="Número de eventos"
   )
-#En la Figura \@ref(fig:figura-diasemana) se puede observar que el día con mayor actividad es el miércoles, con 25.644 registros.
+
 ```
 
 
@@ -243,7 +245,7 @@ usuarios_top <- data %>%
   arrange(desc(n)) %>%   # Ordenar de mayor a menor
   head(3)              # cogemos los 3 primeros
 
-ggplot(usuarios_top, aes(x = reorder(Usuario, n), y = n)) +
+Top3<-ggplot(usuarios_top, aes(x = reorder(Usuario, n), y = n)) +
   geom_col(fill="blue") +
   coord_flip() +
   labs(
@@ -465,32 +467,67 @@ Esta parte del proyecto consiste en identificar la hora pico de acceso y el día
 
 Para ello se ha utilizado herramientas de manipulación y visualización de datos para responder a estas preguntas de forma exploratoria.
 
+<<<<<<< HEAD
 # Pregunta 1: Hora pico de acceso y día con mayor actividad
+=======
+###Pregunta 1: Hora pico de acceso y día con mayor actividad
+```{r}
+horaPico
+```
+>>>>>>> 0303881bac01d9b10bc981d0ea664d61bbb5af22
 
-Para responder a esta cuestión se partió de la variable temporal del dataset, que previamente fue transformada para separar fecha y hora y poder trabajarla correctamente.
+Para responder a esta cuestión se partió de la variable temporal del dataset, que previamente fue transformada para separar correctamente la fecha y la hora de cada registro.
 
-A partir de la hora de cada registro se agruparon los eventos por franjas horarias, contando cuántos accesos se producían en cada una. Esto permitió detectar la hora con mayor volumen de actividad (hora pico), que resultó ser las 9:00.
+A partir de la hora de cada evento, se agruparon los registros por franjas horarias y se contabilizó el número de accesos producidos en cada una de ellas. Este análisis permitió identificar la hora con mayor volumen de actividad (hora pico), que resultó ser las 9:00 horas, coincidiendo con el horario habitual de inicio de las clases.
 
-Del mismo modo, a partir de la variable fecha, se extrajo el día de la semana de cada evento y se agruparon los registros según el día correspondiente. Esto permitió identificar que el miércoles es el día con más actividad registrada.
+```{r}
+eventosdia
+```
 
-Para representar los resultados se utilizaron gráficos de barras, ya que facilitan visualizar la distribución temporal de los eventos.  
+Del mismo modo, a partir de la variable fecha, se extrajo el día de la semana correspondiente a cada evento y se agruparon los registros según dicho criterio. Los resultados muestran que el miércoles es el día con mayor actividad registrada dentro de la plataforma.
+
+Para representar los resultados se utilizaron gráficos de barras, ya que permiten visualizar de forma clara la distribución temporal de los eventos y facilitan la comparación entre franjas horarias y días de la semana. 
+
+
+##Pregunta 1.1: Hora con mas asistencias registradas
+```{r}
+Asistencia
+```
+
+con el objetivo de estudiar el comportamiento de los registros de asistencia en la plataforma, se filtraron únicamente aquellos eventos pertenecientes al componente “Asistencia”. Posteriormente, se seleccionaron los eventos relacionados con acciones de control de asistencia mediante un filtrado sobre el nombre del evento.
+
+Una vez obtenidos los registros relevantes, se representó la distribución temporal de las asistencias utilizando un histograma agrupado por intervalos de tiempo. Este tipo de representación permite visualizar las franjas horarias en las que se concentra un mayor número de registros de asistencia.
+
+Los resultados muestran que la hora con mayor número de asistencias registradas se produce alrededor de las 9:10 horas, lo que coincide con el inicio habitual de las clases presenciales. Esto sugiere que gran parte de las asistencias son registradas al comienzo de la jornada lectiva.
+
+Para la representación gráfica se utilizó un histograma, ya que permite observar de forma clara la frecuencia de registros de asistencia a lo largo del tiempo.
 
 
 # Pregunta 2: Número total de eventos registrados
 
-Para esta parte del análisis se ha considerado que cada fila del dataset representa un evento o acción registrada en Moodle.
+Para esta parte del análisis se consideró que cada fila del dataset representa un evento o acción registrada en Moodle.
 
-A partir de ello se obtuvo el número total de eventos presentes en el conjunto de datos mediante el recuento de observaciones, resultando un total de 109.746 eventos.
+A partir de ello, se obtuvo el número total de eventos presentes en el conjunto de datos mediante el recuento de observaciones, resultando un total de 109.746 eventos registrados.
 
+Este valor permite hacerse una idea del volumen de actividad generado en la plataforma y confirma que el conjunto de datos dispone de un tamaño suficientemente amplio para realizar análisis estadísticos y detectar patrones de comportamiento.
 
+<<<<<<< HEAD
 # Pregunta 3: Usuarios distintos y usuarios con mayor actividad
+=======
+###Pregunta 3: Usuarios distintos y usuarios con mayor actividad
+```{r}
+>>>>>>> 0303881bac01d9b10bc981d0ea664d61bbb5af22
 
-En esta parte se analizó cuántos usuarios distintos aparecen en el conjunto de datos utilizando la variable correspondiente a usuario.
+Top3
+```
 
-Primero se calculó el número de usuarios únicos presentes en el dataset. Posteriormente, se realizó un recuento de eventos por usuario para observar diferencias en niveles de actividad y detectar qué usuarios concentraban un mayor número de registros.
 
-Como apoyo al análisis se incluyó una representación gráfica para visualizar mejor sus diferencias de actividad.
+En esta parte del análisis se estudió cuántos usuarios distintos aparecen en el conjunto de datos utilizando la variable correspondiente al identificador de usuario.
 
+En primer lugar, se calculó el número de usuarios únicos presentes en el dataset. Posteriormente, se realizó un recuento de eventos por usuario con el objetivo de observar diferencias en los niveles de actividad y detectar qué usuarios concentraban un mayor número de registros.
+
+Como apoyo al análisis, se incluyó una representación gráfica con los tres usuarios más activos, lo que permite visualizar de manera más clara las diferencias de participación dentro de la plataforma.
+Hemos puesto solo top3, porque apartir del Top 3 todos los alumnos registraban mas o menos la misma actividad por lo que es irrelevante mostrar mas de 3
 
 # Pregunta 4: ¿Cómo ha evolucionado la actividad a lo largo de los meses?
 
