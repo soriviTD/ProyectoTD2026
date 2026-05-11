@@ -11,9 +11,7 @@ output:
     extra_dependencies: longtable
   bookdown::html_document2: default
   bookdown::pdf_document2: default
-journal: notspecified
 type: article
-status: submit
 simplesummary: |
   En este proyecto de Tratamiento de los Datos se explora un conjunto de datos
   real con el fin de extraer información, cuanto menos interesante, de ellos.
@@ -66,6 +64,7 @@ El dataset está compuesto por un total de 109.746 observaciones (filas) y 10 va
 Las variables incluidas en el conjunto de datos son: Hora, Nombre completo del usuario, Usuario afectado, Contexto del evento, Componente y Nombre evento, Descripción, Origen, y Dirección IP.
 Antes de ser tratadas, todas la variables aparecen como categóricas de tipo carácter (character).
 
+
 ```{r include=FALSE}
 #Corrección de la columna "Hora" para que tenga formato. División de esta en "Fecha" y "Hora".
 data$Hora <- dmy_hms(data$Hora)
@@ -82,42 +81,43 @@ colnames(data)[4] <- 'Usuario_afectado'
 Una vez arregladas algunas columnas, la columna de 'Hora' se ha separado en 'Fecha' y 'Hora'.
 En cuanto a los tipos de datos, la fecha es Date y hora hms. El resto de ellas se mantienen como de tipo carácter.
 
-A partir de este análisis inicial, surgen varias preguntas al reflexionar sobre qué aspectos de los datos son más relevantes para el análisis.
+```{r Preguntas, include=FALSE}
+#A partir de este análisis inicial, surgen varias preguntas al reflexionar sobre qué aspectos de los datos son más relevantes para el análisis.
 
-Preguntas:
+#Preguntas:
 
-1. ¿Cuál es la hora pico de acceso? ¿qué día de la semana hay más actividad?
+#1. ¿Cuál es la hora pico de acceso? ¿qué día de la semana hay más actividad?
 
-2. ¿Cuántos eventos totales hay?
+#2. ¿Cuántos eventos totales hay?
 
-3. ¿Cuántos usuarios distintos aparecen?
+#3. ¿Cuántos usuarios distintos aparecen?
 
-4. ¿Cómo ha evolucionado la actividad a lo largo de los meses?
+#4. ¿Cómo ha evolucionado la actividad a lo largo de los meses?
 
-5. ¿Hay actividad registrada en horarios atípicos (madrugada, festivos)?
+#5. ¿Hay actividad registrada en horarios atípicos (madrugada, festivos)?
 
-6. ¿Predomina la consulta de recursos o la interacción activa?
+#6. ¿Predomina la consulta de recursos o la interacción activa?
 
-7. Media de entrada por usuario. ¿Cuántas veces el que más y el que menos? ¿Primera y última 
-vez?
+#7. Media de entrada por usuario. ¿Cuántas veces el que más y el que menos? ¿Primera y última vez?
 
-8. ¿Cuántos intentos de cuestionario hace de media cada estudiante?
+#8. ¿Cuántos intentos de cuestionario hace de media cada estudiante?
 
-9. ¿Qué tipo de acciones son las más comunes?
+#9. ¿Qué tipo de acciones son las más comunes?
 
-10. ¿Desde cuántas IPs distintas se conecta un mismo usuario? ¿Hay alguna ilógica?
+#10. ¿Desde cuántas IPs distintas se conecta un mismo usuario? ¿Hay alguna ilógica?
 
-11. ¿Existen IPs compartidas por muchos usuarios?
+#11. ¿Existen IPs compartidas por muchos usuarios?
 
-12. ¿Qué porcentaje de usuarios accede desde redes móviles y cuántos desde redes fijas?
+#12. ¿Qué porcentaje de usuarios accede desde redes móviles y cuántos desde redes fijas?
 
-13. ¿Cómo se distribuye la entrega de tareas?
+#13. ¿Cómo se distribuye la entrega de tareas?
 
-14. ¿Cuál es la secuencia de acciones más habitual en una sesión?
+#14. ¿Cuál es la secuencia de acciones más habitual en una sesión?
 
-15. ¿Cuánto tiempo pasa entre acciones relacionadas?
+#15. ¿Cuánto tiempo pasa entre acciones relacionadas?
 
-16. ¿Qué acciones conllevan acción sobre uno mismo? ¿Y sobre otro usuario?
+#16. ¿Qué acciones conllevan acción sobre uno mismo? ¿Y sobre otro usuario?
+```
 
 
 
@@ -456,8 +456,8 @@ data_16_grafico <-ggplot(data_16, aes(x = reorder(Componente, interacciones), y 
 ```
 
 
-#Memoria del trabajo realizado
-##Introducción
+
+# Introducción
 
 En este proyecto se ha trabajado con un conjunto de datos procedente de registros de actividad de la plataforma Moodle (logs_moodle_anon.csv), con el objetivo de extraer información relevante a partir de los eventos registrados.
 
@@ -465,7 +465,7 @@ Esta parte del proyecto consiste en identificar la hora pico de acceso y el día
 
 Para ello se ha utilizado herramientas de manipulación y visualización de datos para responder a estas preguntas de forma exploratoria.
 
-###Pregunta 1: Hora pico de acceso y día con mayor actividad
+# Pregunta 1: Hora pico de acceso y día con mayor actividad
 
 Para responder a esta cuestión se partió de la variable temporal del dataset, que previamente fue transformada para separar fecha y hora y poder trabajarla correctamente.
 
@@ -476,14 +476,14 @@ Del mismo modo, a partir de la variable fecha, se extrajo el día de la semana d
 Para representar los resultados se utilizaron gráficos de barras, ya que facilitan visualizar la distribución temporal de los eventos.  
 
 
-###Pregunta 2: Número total de eventos registrados
+# Pregunta 2: Número total de eventos registrados
 
 Para esta parte del análisis se ha considerado que cada fila del dataset representa un evento o acción registrada en Moodle.
 
 A partir de ello se obtuvo el número total de eventos presentes en el conjunto de datos mediante el recuento de observaciones, resultando un total de 109.746 eventos.
 
 
-###Pregunta 3: Usuarios distintos y usuarios con mayor actividad
+# Pregunta 3: Usuarios distintos y usuarios con mayor actividad
 
 En esta parte se analizó cuántos usuarios distintos aparecen en el conjunto de datos utilizando la variable correspondiente a usuario.
 
@@ -492,49 +492,49 @@ Primero se calculó el número de usuarios únicos presentes en el dataset. Post
 Como apoyo al análisis se incluyó una representación gráfica para visualizar mejor sus diferencias de actividad.
 
 
-###Pregunta 4: ¿Cómo ha evolucionado la actividad a lo largo de los meses?
+# Pregunta 4: ¿Cómo ha evolucionado la actividad a lo largo de los meses?
 
 
-###Pregunta 5: ¿Hay actividad registrada en horarios atípicos (madrugada, festivos)?
+# Pregunta 5: ¿Hay actividad registrada en horarios atípicos (madrugada, festivos)?
 
 
-###Pregunta 6: ¿Predomina la consulta de recursos o la interacción activa?
+# Pregunta 6: ¿Predomina la consulta de recursos o la interacción activa?
 
 
-###Pregunta 7: Media de entrada por usuario. ¿Cuántas veces el que más y el que menos? ¿Primera y última vez?
+# Pregunta 7: Media de entrada por usuario. ¿Cuántas veces el que más y el que menos? ¿Primera y última vez?
 
-\ref{fig:fig2}
-\ref{fig:fig3}
-
-
-```{r fig2, echo=FALSE, fig.cap="Comparación entre días totales y únicamente los de acceso.\\label{fig:fig2}"}
+```{r fig2, echo=FALSE, fig.width=3, fig.cap="Comparación entre días totales y únicamente los de acceso.\\label{fig:fig2}"}
 grafico_ej_7_1 + grafico_ej_7_2
 ```
 
-Viendo este gráfico se puede observar que la mayoría de los alumnos se han conectado la mitad de los días que han tenido acceso (entendiendo esto como los días desde el primer acceso hasta el último). Además se puede ver que en ambos casos el usuario con más accesos es también el que más días ha tenido acceso. Pese a esto, contabilizando únicamente los días que realmente ha accedido a la página, se puede ver que ha accedido más o menos la misma cantidad de días que la media de los usuarios pero ha realizado muchas más acciones.
+Viendo el gráfico \ref{fig:fig2} se puede observar que la mayoría de los alumnos se han conectado la mitad de los días que han tenido acceso (entendiendo esto como los días desde el primer acceso hasta el último). Además se puede ver que en ambos casos el usuario con más accesos es también el que más días ha tenido acceso. Pese a esto, contabilizando únicamente los días que realmente ha accedido a la página, se puede ver que ha accedido más o menos la misma cantidad de días que la media de los usuarios pero ha realizado muchas más acciones. Además, se observa que los usuarios que más días han accedido al aula virtual, son también los que más acciones han realizado.
 
-```{r fig3, echo=FALSE, fig.cap="A figure added with a code chunk.\\label{fig:fig3}"}
+```{r fig3, echo=FALSE, fig.width=3, fig.cap="A figure added with a code chunk.\\label{fig:fig3}"}
 grafico_ej_7_3
 ```
 
-En la figura \ref(fig:fig3) se observa la cantidad de accesos según el usuario.
+En esta otra figura ( \ref{fig:fig3}) se observa que la mayoría de las personas se han conectado entre 1000y 1200 veces.
 
 
-###Pregunta 8: ¿Cuántos intentos de cuestionario hace de media cada estudiante?
+# Pregunta 8: ¿Cuántos intentos de cuestionario hace de media cada estudiante?
 
-```{r p8-1, fig.cap = 'Intentos_cuestionario/Usuario', echo=FALSE}
+```{r fig4, fig.width=3, fig.cap = 'Intentos_cuestionario/Usuario', echo=FALSE}
 grafico_ej_8_1
 ```
-En la figura \ref(fig:p8-1) se muestra un grafico con la cantidad de intentos por cuestionario realizados por cada usuario.
 
-```{r p8-2, fig.cap = 'Intentos por cuestionario', echo=FALSE}
+La figura \ref(fig:4) pretende mostrar la relación entre la cantidad de intentos realizados y los usuarios. De esta forma se observa que la mayoría ha realizado al menos un intento por cuestionario (pese a que no se puede estar completamente seguros de que hayan realizado todos los cuestionarios). Además, hay algunos usuarios que viendo este gráfico se sabe que habrá mínimo uno que no habrán realizado, estos son los que están por debajo de la línea punteada.
+
+```{r fig5, fig.width=3, fig.cap = 'Intentos por cuestionario', echo=FALSE}
 grafico_ej_8_2
 ```
-En la figura \ref(fig:p8-2) se observa la cantidad de intentos realizados por cada cuestionario.
+
+Por otro lado, de esta otra figura (\ref{fig:fig5}) se puede extraer información más interesante. Siendo que se encuentran en orden cronológico de apertura, destacan sobre los demás el cuestionario global de la asignatura y en menor medida, el de recordamos R. Se puede entender que el global haya sido realizado más veces. Pese a no tener información exacta de ese cuestinario, asumiendo que fuera igual al que tenemos disponible nosotros en el aula virtual, se trata de un cuestionario que recoge cuestiones posibles del examen. Además, realizándolo, se repasa el temario y al quedarse la nota más alta obtenida, los alumnos pueden realizarlo cuantas veces quieran. Este cuestionario tiene treinta preguntas a realizar en una hora y media.
+
+Por otro lado, en cuanto al cuestionario recordamos r, la razón por la que entendemos que tanta gente lo ha realizado es porque era el primero. Además, este se realizaba en el aula, por lo que es prácticamente seguro que todos los alumnos lo habrán realizado al menos una vez.
 
 
 
-###Pregunta 9: ¿Qué tipo de acciones son las más comunes?
+# Pregunta 9: ¿Qué tipo de acciones son las más comunes?
 
 ```{r echo=FALSE}
 knitr::kable(tabla_ej_9, 
@@ -542,10 +542,11 @@ knitr::kable(tabla_ej_9,
              booktabs = TRUE)
 ```
 
+En esta tabla se observan las diez acciones que más se han realizado. Es sorprendente que sea la calificación de los usuarios la tercera acción más realizada. Esto podría justificar en parte que el usuario U0072 sea el que más acciones tiene.
 
-###Pregunta 10: ¿Desde cuántas IPs distintas se conecta un mismo usuario? ¿Hay alguna ilógica?
+# Pregunta 10: ¿Desde cuántas IPs distintas se conecta un mismo usuario? ¿Hay alguna ilógica?
 
-```{r fig10,fig.cap ='Numero de IPs por Usuario',echo=FALSE}
+```{r fig10,fig.width=3,fig.cap ='Numero de IPs por Usuario',echo=FALSE}
 g_10
 ```
 
@@ -554,7 +555,7 @@ Como podemos visualizar en la figura \ref(fig:fig10) tenemos unos cuantos usuari
 En el caso de este conjunto de datos, tenemos un outlier que cuenta con mas de 1000 IPs diferentes, podriamos pensar que este usuario usa de manera muy frecuente VPN o redes moviles que generan una Ip diferente para cada conexion.
 
 
-###Pregunta 11: ¿Existen IPs compartidas por muchos usuarios?
+# Pregunta 11: ¿Existen IPs compartidas por muchos usuarios?
 ```{r t_11, echo=FALSE}
 t_11
 ```
@@ -565,11 +566,12 @@ A parte, podemos ver como una IP si que es utilizada por 4 personas, esta es pos
 
 
 
-###Pregunta 12: ¿Qué porcentaje de usuarios accede desde redes móviles y cuántos desde redes fijas?
+# Pregunta 12: ¿Qué porcentaje de usuarios accede desde redes móviles y cuántos desde redes fijas?
 
-```{r f_12, fig.cap= 'Accesos mediante red movil o fija'}
+```{r f_12, echo=FALSE, fig.cap='Accesos mediante red movil o fija', fig.width=3}
 g_12
 ```
+
 Para responder a esta pregunta, se ha clasificado el tipo de acceso en dos grupos (IPv4 e IPv6) según el origen de la conexión. Se han considerado accesos mediante una red fija a las IPv4 y accesos de red móvil a las IPv6.
 
 Lo consideramos asi ya que las IPv4 se usan desde hace mas tiempo y son las usadas principalmente por ordenadores y redes fijas y la IPv6, es mas nueva y usada principalmente en redes 5G o 4G que dan lugar a redes moviles.
@@ -577,31 +579,30 @@ Lo consideramos asi ya que las IPv4 se usan desde hace mas tiempo y son las usad
 Por ello hemos clasificado las diferentes IPs segun su tipo (representacion en la figura \ref(fig:f_12)) y hemos obtenido que el 52.4488 utilizan redes fijas, normalmente de un ordenador y el resto, es decir, un 47.5512 acceden mediante redes moviles, que generan una IP cada vez que se conectan, si lo hacen en un periodo de tiempo no muy cercano.
 
 
-###Pregunta 13:  ¿Cuáles son los 10 eventos más frecuentes en el dataset?
+# Pregunta 13:  ¿Cuáles son los 10 eventos más frecuentes en el dataset?
 ```{r echo=FALSE}
 data_13_grafico
 ```
 
 
 
-###Pregunta 14: ¿Cuántos usuarios distintos han interactuado con cada tarea del curso?
-```{r echo=FALSE}
+# Pregunta 14: ¿Cuántos usuarios distintos han interactuado con cada tarea del curso?
+```{r fig.width=3,echo=FALSE}
 data_14
 data_14_grafico
 ```
 
 
-###Pregunta 15: ¿Cuantos eventos tienen usuario afectado y cuántos no?
+# Pregunta 15: ¿Cuantos eventos tienen usuario afectado y cuántos no?
 
-```{r echo=FALSE}
+```{r echo=FALSE, fig.height=3, fig.width=3}
 data_15
 data_15_grafico
 ```
 
 
-###Pregunta 16: ¿Qué componentes generan más interacciones entre usuarios (usuario afectado distinto del usuario que realiza la acción)?
-```{r echo=FALSE}
+# Pregunta 16: ¿Qué componentes generan más interacciones entre usuarios (usuario afectado distinto del usuario que realiza la acción)?
+```{r fig.width=3,echo=FALSE}
 data_16
 data_16_grafico
 ```
-
