@@ -468,6 +468,7 @@ Esta parte del proyecto consiste en identificar la hora pico de acceso y el día
 Para ello se ha utilizado herramientas de manipulación y visualización de datos para responder a estas preguntas de forma exploratoria.
 
 # Pregunta 1: Hora pico de acceso y día con mayor actividad
+
 ```{r}
 horaPico
 ```
@@ -486,6 +487,7 @@ Para representar los resultados se utilizaron gráficos de barras, ya que permit
 
 
 ##Pregunta 1.1: Hora con mas asistencias registradas
+
 ```{r}
 Asistencia
 ```
