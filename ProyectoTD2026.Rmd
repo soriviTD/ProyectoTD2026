@@ -7,10 +7,10 @@ author:
 - name: Marta Sisternas Ruíz
 - name: Belinda Villalta Lillo
 output:
-  bookdown::pdf_document2: default
-  bookdown::html_document2: default
   rticles::mdpi_article:
     extra_dependencies: longtable
+  bookdown::html_document2: default
+  bookdown::pdf_document2: default
 journal: notspecified
 type: article
 status: submit
