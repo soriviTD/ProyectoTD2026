@@ -357,6 +357,9 @@ d_10 <- data %>%
   group_by(Usuario) %>%
   summarise(IPs = n_distinct(`Dirección IP`)) %>%
   arrange(desc(IPs))
+
+g_10 <- d_10 %>% ggplot(aes(Usuario,IPs)) + geom_col(fill = "lightblue") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1,size = 5)) 
 ```
 
 ```{r Ejercicio 11,include = FALSE}
@@ -366,6 +369,8 @@ d_11 <- data %>%
   group_by(`Dirección IP`) %>%
   summarise(`Numero Usuarios` = n_distinct(Usuario)) %>%
   arrange(desc(`Numero Usuarios`))
+
+t_11 <- d_11 %>% group_by(`Numero Usuarios`) %>% summarise(Frecuencia = n()) %>% rename(`Numero Usuarios por IP` = `Numero Usuarios`)
 ```
 
 ```{r Ejercicio 12, include = FALSE}
@@ -377,9 +382,10 @@ d_12 <- data %>%
   mutate(`Tipo IP` = ifelse(str_detect(`Dirección IP`, ":"), "IPv6", "IPv4")) %>% 
   drop_na(`Dirección IP`) %>% 
   count(`Tipo IP`) %>%
-  mutate(porcentaje = n / sum(n))
-```
+  mutate(porcentaje = (n / sum(n))*100)
 
+g_12 <- d_12 %>% ggplot(aes(x = `Tipo IP`,y = porcentaje)) +geom_col(fill = c("lightblue","lightgreen"),col = "black")
+```
 
 ```{r Ejercicio 13, include=FALSE}
 data_13 <- data %>%
@@ -511,7 +517,7 @@ Viendo este gráfico se puede observar que la mayoría de los alumnos se han con
 grafico_ej_7_3
 ```
 
-En la figura \@ref(fig:fig3) se observa la cantidad de accesos según el usuario.
+En la figura \ref(fig:fig3) se observa la cantidad de accesos según el usuario.
 
 
 ###Pregunta 8: ¿Cuántos intentos de cuestionario hace de media cada estudiante?
@@ -519,12 +525,12 @@ En la figura \@ref(fig:fig3) se observa la cantidad de accesos según el usuario
 ```{r p8-1, fig.cap = 'Intentos_cuestionario/Usuario', echo=FALSE}
 grafico_ej_8_1
 ```
-En la figura \@ref(fig:p8-1) se muestra un grafico con la cantidad de intentos por cuestionario realizados por cada usuario.
+En la figura \ref(fig:p8-1) se muestra un grafico con la cantidad de intentos por cuestionario realizados por cada usuario.
 
 ```{r p8-2, fig.cap = 'Intentos por cuestionario', echo=FALSE}
 grafico_ej_8_2
 ```
-En la figura \@ref(fig:p8-2) se observa la cantidad de intentos realizados por cada cuestionario.
+En la figura \ref(fig:p8-2) se observa la cantidad de intentos realizados por cada cuestionario.
 
 
 
@@ -539,12 +545,36 @@ knitr::kable(tabla_ej_9,
 
 ###Pregunta 10: ¿Desde cuántas IPs distintas se conecta un mismo usuario? ¿Hay alguna ilógica?
 
+```{r fig10,fig.cap ='Numero de IPs por Usuario',echo=FALSE}
+g_10
+```
+
+Como podemos visualizar en la figura \ref(fig:fig10) tenemos unos cuantos usuarios que se conectan con un numero muy najo de IPs y por eso no podemos llegar a verlos, pero hay otros que se llegan a conectar con mas de 100 IPs, esto puede ser debido al uso de redes moviles, VPN u otros factores externos.
+
+En el caso de este conjunto de datos, tenemos un outlier que cuenta con mas de 1000 IPs diferentes, podriamos pensar que este usuario usa de manera muy frecuente VPN o redes moviles que generan una Ip diferente para cada conexion.
 
 
 ###Pregunta 11: ¿Existen IPs compartidas por muchos usuarios?
+```{r t_11, echo=FALSE}
+t_11
+```
+
+Como podemos ver en la tabla \ref(tab:t_11), la gran mayoria de las IPs tienen pocos usuarios que las hayan utilizado, esto se debe al poco uso de ordenadores alojados en la universidad, ademas de que comunmente no se les olvidan a los alumnos el portatil o el dispositivo donde acceden al aula virtual.
+
+A parte, podemos ver como una IP si que es utilizada por 4 personas, esta es posible que sea una IP de un ordenador de la universidad.
+
 
 
 ###Pregunta 12: ¿Qué porcentaje de usuarios accede desde redes móviles y cuántos desde redes fijas?
+
+```{r f_12, fig.cap= 'Accesos mediante red movil o fija'}
+g_12
+```
+Para responder a esta pregunta, se ha clasificado el tipo de acceso en dos grupos (IPv4 e IPv6) según el origen de la conexión. Se han considerado accesos mediante una red fija a las IPv4 y accesos de red móvil a las IPv6.
+
+Lo consideramos asi ya que las IPv4 se usan desde hace mas tiempo y son las usadas principalmente por ordenadores y redes fijas y la IPv6, es mas nueva y usada principalmente en redes 5G o 4G que dan lugar a redes moviles.
+
+Por ello hemos clasificado las diferentes IPs segun su tipo (representacion en la figura \ref(fig:f_12)) y hemos obtenido que el 52.4488 utilizan redes fijas, normalmente de un ordenador y el resto, es decir, un 47.5512 acceden mediante redes moviles, que generan una IP cada vez que se conectan, si lo hacen en un periodo de tiempo no muy cercano.
 
 
 ###Pregunta 13:  ¿Cuáles son los 10 eventos más frecuentes en el dataset?
