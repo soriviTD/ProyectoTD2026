@@ -467,14 +467,10 @@ Esta parte del proyecto consiste en identificar la hora pico de acceso y el día
 
 Para ello se ha utilizado herramientas de manipulación y visualización de datos para responder a estas preguntas de forma exploratoria.
 
-<<<<<<< HEAD
 # Pregunta 1: Hora pico de acceso y día con mayor actividad
-=======
-###Pregunta 1: Hora pico de acceso y día con mayor actividad
 ```{r}
 horaPico
 ```
->>>>>>> 0303881bac01d9b10bc981d0ea664d61bbb5af22
 
 Para responder a esta cuestión se partió de la variable temporal del dataset, que previamente fue transformada para separar correctamente la fecha y la hora de cada registro.
 
@@ -511,13 +507,8 @@ A partir de ello, se obtuvo el número total de eventos presentes en el conjunto
 
 Este valor permite hacerse una idea del volumen de actividad generado en la plataforma y confirma que el conjunto de datos dispone de un tamaño suficientemente amplio para realizar análisis estadísticos y detectar patrones de comportamiento.
 
-<<<<<<< HEAD
 # Pregunta 3: Usuarios distintos y usuarios con mayor actividad
-=======
-###Pregunta 3: Usuarios distintos y usuarios con mayor actividad
 ```{r}
->>>>>>> 0303881bac01d9b10bc981d0ea664d61bbb5af22
-
 Top3
 ```
 
