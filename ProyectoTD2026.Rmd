@@ -357,6 +357,9 @@ d_10 <- data %>%
   group_by(Usuario) %>%
   summarise(IPs = n_distinct(`Dirección IP`)) %>%
   arrange(desc(IPs))
+
+g_10 <- d_10 %>% ggplot(aes(Usuario,IPs)) + geom_col(fill = "lightblue") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
 ```
 
 ```{r Ejercicio 11,include = FALSE}
@@ -366,6 +369,13 @@ d_11 <- data %>%
   group_by(`Dirección IP`) %>%
   summarise(`Numero Usuarios` = n_distinct(Usuario)) %>%
   arrange(desc(`Numero Usuarios`))
+
+g_11 <- d_11 %>% 
+  ggplot(aes(x = `Numero Usuarios`)) +
+  geom_histogram(fill = "lightblue",
+    color = "white",
+    bins = 30) +scale_y_log10(na.value = NA) + labs(title = "Distribución del número de usuarios",
+    x = "Número de usuarios",y = "Frecuencia (escala logarítmica)")
 ```
 
 ```{r Ejercicio 12, include = FALSE}
@@ -539,9 +549,18 @@ knitr::kable(tabla_ej_9,
 
 ###Pregunta 10: ¿Desde cuántas IPs distintas se conecta un mismo usuario? ¿Hay alguna ilógica?
 
+```{r fig10,fig.cap ='Numero de IPs por Usuario',echo=FALSE}
+g_10
+```
+
+Como podemos visualizar en la figura \@ref(fig:fig10) tenemos unos cuantos usuarios que se conectan con un numero muy najo de IPs y por eso no podemos llegar a verlos, pero hay otros que se llegan a conectar con mas de 100 IPs, esto puede ser debido al uso de redes moviles, VPN u otros factores externos.
+
+En el caso de este conjunto de datos, tenemos un outlier que cuenta con mas de 1000 IPs diferentes, podriamos pensar que este usuario usa de manera muy frecuente VPN o redes moviles que generan una Ip diferente para cada conexion.
 
 
 ###Pregunta 11: ¿Existen IPs compartidas por muchos usuarios?
+```{r}
+```
 
 
 ###Pregunta 12: ¿Qué porcentaje de usuarios accede desde redes móviles y cuántos desde redes fijas?
