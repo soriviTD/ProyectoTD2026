@@ -409,7 +409,9 @@ data_13_grafico <- ggplot(data_13, aes(x = reorder(`Nombre evento`, n), y = n)) 
 data_14 <- data %>%
   filter(Componente == "Tarea") %>%
   group_by(`Contexto del evento`) %>%
-  summarise(Distintos = n_distinct(Usuario))
+  summarise(Distintos = n_distinct(Usuario)) %>%
+  arrange(desc(Distintos))
+
 
 data_14_grafico <- ggplot(data_14, aes(x = reorder(`Contexto del evento`, Distintos), y = Distintos)) +
   geom_bar(stat = "identity", fill = "blue") +
@@ -446,7 +448,6 @@ data_16 <- data %>%
   filter(Usuario_afectado != Usuario) %>%
   group_by(Componente) %>%
   summarise(interacciones = n()) %>%
-  slice(1:10) %>%
   arrange(desc(interacciones))
 
 data_16_grafico <-ggplot(data_16, aes(x = reorder(Componente, interacciones), y = interacciones)) + 
@@ -613,26 +614,48 @@ Por ello hemos clasificado las diferentes IPs segun su tipo (representacion en l
 ```{r echo=FALSE}
 data_13_grafico
 ```
+Para esta parte del análisis se identificaron los 10 eventos más frecuentes registrados en el dataset. Para ello se contabilizó el número de ocurrencias de cada tipo de evento y se ordenaron de mayor a menor frecuencia.
+El evento más frecuente es "Módulo de curso visto", con más de 22.000 registros, seguido de "Curso visto" con alrededor de 20.000. Ambos eventos destacan claramente sobre el resto, lo que indica que la actividad predominante en la plataforma es la consulta y visualización de contenidos.
 
+Esto refleja que los usuarios de la plataforma tienen un comportamiento predominantemente consultivo, accediendo y visualizando contenidos con mucha más frecuencia de la que interactúan activamente
 
 
 # Pregunta 14: ¿Cuántos usuarios distintos han interactuado con cada tarea del curso?
-```{r fig.width=3,echo=FALSE}
+```{r echo=FALSE}
 data_14
 data_14_grafico
 ```
+Para esta parte del análisis se estudió cuántos usuarios distintos han interactuado con cada tarea del curso. Para ello se filtraron los eventos del componente "Tarea", se agruparon por contexto del evento y se contó el número de usuarios únicos en cada uno.
 
+Los resultados muestran diferencias notables entre las tareas. Las más visitadas son "Práctica 1: Importación - Tarea" con 75 usuarios distintos y "Práctica 2. Visualización" y "Práctica 4. Entrega de ejercicios" con 74 usuarios cada una. Estas tareas, al ser prácticas obligatorias del curso, concentran la participación de prácticamente todos los alumnos.
+
+En el extremo opuesto aparecen entradas identificadas como "assign (id ...) borrado", con únicamente 1 usuario distinto. Estas corresponden a tareas que han sido eliminadas de la plataforma y de las que solo queda un registro residual en los logs.
+En general se observa que las tareas evaluables y obligatorias concentran la mayor participación, mientras que tareas opcionales o eliminadas tienen una presencia mucho menor.
 
 # Pregunta 15: ¿Cuantos eventos tienen usuario afectado y cuántos no?
 
-```{r echo=FALSE, fig.height=3, fig.width=3}
+```{r echo=FALSE}
 data_15
 data_15_grafico
 ```
+Para esta parte del análisis se estudió qué proporción de los eventos registrados en el dataset implican una interacción sobre otro usuario, es decir, tienen un valor en la columna Usuario afectado, y cuántos no.
 
+Para ello se clasificó cada evento en dos categorías: "Con usuario afectado" cuando la columna no era NA, y "Sin usuario afectado" cuando sí lo era. A continuación se calculó el porcentaje de cada grupo sobre el total de eventos.
+
+Los resultados muestran que 69.346 eventos, un 63.2% del total, no tienen usuario afectado, mientras que 40.400 eventos, el 36.8% restante, sí lo tienen. Esto indica que la mayoría de las acciones registradas en Moodle son individuales, es decir, el usuario actúa sobre la plataforma sin que ello repercuta directamente sobre otro usuario. Las interacciones entre usuarios, aunque presentes, representan poco más de un tercio del total de la actividad.
 
 # Pregunta 16: ¿Qué componentes generan más interacciones entre usuarios (usuario afectado distinto del usuario que realiza la acción)?
-```{r fig.width=3,echo=FALSE}
+```{r echo=FALSE}
 data_16
 data_16_grafico
 ```
+En esta pregunta se busca averiguar cuales son los componentes que generan mas interacciones entre usuarios distintos. Es decir, situaciones en las que el usuario que realiza la acción es diferente al usuario afectado. Para ello se filtraron los eventos donde Usuario afectado no era NA y además era distinto del usuario que realizaba la acción, agrupamos por componente y por ultimo contamos el numero de interacciones de cada uno.
+
+Los resultados muestran que únicamente 6 componentes generan este tipo de interacciones. El componente "Sistema" es con diferencia el más destacado, con 14.013 interacciones entre usuarios distintos, seguido de "Tarea" con 1.453. El resto de componentes, "Cuestionario" con 175, "Usuario" con 37, "Registros" con 3 y "Foro" con 1, tienen una presencia muy inferior.
+
+Esto indica que la mayor parte de las interacciones entre usuarios en la plataforma se producen a través del Sistema, probablemente relacionadas con acciones administrativas del profesor sobre los alumnos.
+
+
+
+
+
