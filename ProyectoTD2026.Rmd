@@ -256,8 +256,21 @@ Top3<-ggplot(usuarios_top, aes(x = reorder(Usuario, n), y = n)) +
 #En la Figura \@ref(fig:figura-usuariostop) se observan los tres usuarios con mayor actividad y sus registros
 ```
 
+```{r}
+#Pregunta 4: ¿Cómo ha evolucionado la actividad a lo largo de los meses?
+
+```
+
+```{r}
+#Pregunta 5:  ¿Hay actividad registrada en horarios atípicos (madrugada, festivos)?
 
 
+```
+
+```{r}
+#6. ¿Predomina la consulta de recursos o la interacción activa?
+
+```
 
 
 ```{r Ejercicio 7, include=FALSE}
