@@ -548,7 +548,7 @@ Hemos puesto solo top3, porque apartir del Top 3 todos los alumnos registraban m
 
 # Pregunta 7: Media de entrada por usuario. ¿Cuántas veces el que más y el que menos? ¿Primera y última vez?
 
-```{r fig2, echo=FALSE, fig.width=3, fig.cap="Comparación entre días totales y únicamente los de acceso.\\label{fig:fig2}"}
+```{r fig2, echo=FALSE, fig.cap="Comparación entre días totales y únicamente los de acceso.\\label{fig:fig2}", fig.width=3}
 grafico_ej_7_1 + grafico_ej_7_2
 ```
 
@@ -573,7 +573,7 @@ La figura \ref(fig:4) pretende mostrar la relación entre la cantidad de intento
 grafico_ej_8_2
 ```
 
-Por otro lado, de esta otra figura (\ref{fig:fig5}) se puede extraer información más interesante. Siendo que se encuentran en orden cronológico de apertura, destacan sobre los demás el cuestionario global de la asignatura y en menor medida, el de recordamos R. Se puede entender que el global haya sido realizado más veces. Pese a no tener información exacta de ese cuestinario, asumiendo que fuera igual al que tenemos disponible nosotros en el aula virtual, se trata de un cuestionario que recoge cuestiones posibles del examen. Además, realizándolo, se repasa el temario y al quedarse la nota más alta obtenida, los alumnos pueden realizarlo cuantas veces quieran. Este cuestionario tiene treinta preguntas a realizar en una hora y media.
+Por otro lado, de esta otra figura (\ref{fig:fig5}) se puede extraer información más interesante. Siendo que se encuentran en orden cronológico de apertura, destacan sobre los demás el cuestionario global de la asignatura y en menor medida, el de recordamos R. Se puede entender que el global haya sido realizado más veces. Pese a no tener información exacta de ese cuestionario, asumiendo que fuera igual al que tenemos disponible nosotros en el aula virtual, se trata de un cuestionario que recoge cuestiones posibles del examen. Además, realizándolo, se repasa el temario y al quedarse la nota más alta obtenida, los alumnos pueden realizarlo cuantas veces quieran. Este cuestionario tiene treinta preguntas a realizar en una hora y media.
 
 Por otro lado, en cuanto al cuestionario recordamos r, la razón por la que entendemos que tanta gente lo ha realizado es porque era el primero. Además, este se realizaba en el aula, por lo que es prácticamente seguro que todos los alumnos lo habrán realizado al menos una vez.
 
