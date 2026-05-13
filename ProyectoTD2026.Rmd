@@ -265,7 +265,6 @@ data_mensual <- data %>% mutate(Mes_Num = as.factor(month(Fecha))) %>%
 ggplot(data_mensual, aes(x = Mes_Num, y = n)) + geom_col(fill = "steelblue") +
   labs(title = "Evolución de la actividad por meses", x = "Meses", y = "Total de registros") +
   theme_minimal()
-
 ```
 
 ```{r}
@@ -275,7 +274,6 @@ actividad_madrugada <- data %>% mutate(solo_hora = hour(Hora)) %>% filter(solo_h
 
 conteo_horas <- actividad_madrugada %>% count(solo_hora)
 conteo_horas
-
 ```
 
 ```{r}
@@ -283,9 +281,9 @@ conteo_horas
 
 data_tipo <- data %>%
   mutate(Categoria = ifelse(`Nombre evento` == "Módulo de curso visto" | 
-                            `Nombre evento` == "Curso visto" |
-                            `Nombre evento` == "Carpeta vista" |
-                            `Nombre evento` == "Recurso visto", # Añadimos más tipos de consulta
+                              `Nombre evento` == "Curso visto" |
+                              `Nombre evento` == "Carpeta vista" |
+                              `Nombre evento` == "Recurso visto", 
                             "Consulta de recursos", "Interacción activa"))
 
 resumen_tipo <- data_tipo %>% 
@@ -298,7 +296,6 @@ ggplot(resumen_tipo, aes(x = Categoria, y = Total, fill = Categoria)) +
        x = "Tipo de actividad", 
        y = "Número de registros") + 
   theme_minimal()
-
 ```
 
 
