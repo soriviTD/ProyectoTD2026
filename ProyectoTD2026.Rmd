@@ -423,7 +423,8 @@ data_14 <- data %>%
   filter(Componente == "Tarea") %>%
   group_by(`Contexto del evento`) %>%
   summarise(Distintos = n_distinct(Usuario)) %>%
-  arrange(desc(Distintos))
+  arrange(desc(Distintos))%>%
+  slice(1:15)
 
 
 data_14_grafico <- ggplot(data_14, aes(x = reorder(`Contexto del evento`, Distintos), y = Distintos)) +
@@ -633,7 +634,7 @@ El evento más frecuente es "Módulo de curso visto", con más de 22.000 registr
 Esto refleja que los usuarios de la plataforma tienen un comportamiento predominantemente consultivo, accediendo y visualizando contenidos con mucha más frecuencia de la que interactúan activamente
 
 
-# Pregunta 14: ¿Cuántos usuarios distintos han interactuado con cada tarea del curso?
+# Pregunta 14: ¿Cuales son las tareas con mas interacciones de usuarios del curso?
 ```{r echo=FALSE}
 data_14
 data_14_grafico
