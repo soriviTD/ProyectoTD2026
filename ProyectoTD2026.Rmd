@@ -81,45 +81,6 @@ colnames(data)[4] <- 'Usuario_afectado'
 Una vez arregladas algunas columnas, la columna de 'Hora' se ha separado en 'Fecha' y 'Hora'.
 En cuanto a los tipos de datos, la fecha es Date y hora hms. El resto de ellas se mantienen como de tipo carácter.
 
-```{r Preguntas, include=FALSE}
-#A partir de este análisis inicial, surgen varias preguntas al reflexionar sobre qué aspectos de los datos son más relevantes para el análisis.
-
-#Preguntas:
-
-#1. ¿Cuál es la hora pico de acceso? ¿qué día de la semana hay más actividad?
-
-#2. ¿Cuántos eventos totales hay?
-
-#3. ¿Cuántos usuarios distintos aparecen?
-
-#4. ¿Cómo ha evolucionado la actividad a lo largo de los meses?
-
-#5. ¿Hay actividad registrada en horarios atípicos (madrugada, festivos)?
-
-#6. ¿Predomina la consulta de recursos o la interacción activa?
-
-#7. Media de entrada por usuario. ¿Cuántas veces el que más y el que menos? ¿Primera y última vez?
-
-#8. ¿Cuántos intentos de cuestionario hace de media cada estudiante?
-
-#9. ¿Qué tipo de acciones son las más comunes?
-
-#10. ¿Desde cuántas IPs distintas se conecta un mismo usuario? ¿Hay alguna ilógica?
-
-#11. ¿Existen IPs compartidas por muchos usuarios?
-
-#12. ¿Qué porcentaje de usuarios accede desde redes móviles y cuántos desde redes fijas?
-
-#13. ¿Cómo se distribuye la entrega de tareas?
-
-#14. ¿Cuál es la secuencia de acciones más habitual en una sesión?
-
-#15. ¿Cuánto tiempo pasa entre acciones relacionadas?
-
-#16. ¿Qué acciones conllevan acción sobre uno mismo? ¿Y sobre otro usuario?
-```
-
-
 
 ```{r figura-horapico, fig.cap="Distribución de eventos por hora del día", include=FALSE}
 #1. ¿Cuál es la hora pico de acceso? ¿qué día de la semana hay más actividad?
@@ -256,8 +217,8 @@ Top3<-ggplot(usuarios_top, aes(x = reorder(Usuario, n), y = n)) +
 #En la Figura \@ref(fig:figura-usuariostop) se observan los tres usuarios con mayor actividad y sus registros
 ```
 
-```{r}
-#Pregunta 4: ¿Cómo ha evolucionado la actividad a lo largo de los meses?
+```{r Pregunta 4, eval=FALSE, include=FALSE}
+#¿Cómo ha evolucionado la actividad a lo largo de los meses?
 
 # Carga y preparación inicial (basada en tu archivo .Rmd)
 data <- read_csv("data/logs_moodle_anon.csv")
@@ -277,8 +238,8 @@ ggplot(evolucion_mensual, aes(x = Mes, y = n)) +
   theme_minimal()
 ```
 
-```{r}
-#Pregunta 5:  ¿Hay actividad registrada en horarios atípicos (madrugada, festivos)?
+```{r Pregunta 5, eval=FALSE, include=FALSE}
+#¿Hay actividad registrada en horarios atípicos (madrugada, festivos)?
 
 actividad_horaria <- data %>%
   mutate(
@@ -299,8 +260,8 @@ resumen_atipico <- actividad_horaria %>%
 resumen_atipico
 ```
 
-```{r}
-#6. ¿Predomina la consulta de recursos o la interacción activa?
+```{r Pregunta 6, eval=FALSE, include=FALSE}
+#¿Predomina la consulta de recursos o la interacción activa?
 
 data_tipo <- data %>%
   mutate(Categoria = case_when(
@@ -368,13 +329,6 @@ grafico_ej_7_3 <- ggplot(df_ej_7, aes(x=Usuario, y=Cant_accesos)) + geom_point()
 ```{r Ejercicio 8, include=FALSE}
 d_8 <- data %>% filter(`Componente` == 'Cuestionario')
 unique(d_8$`Nombre evento`)
-
-#"Intento enviado", "Ha comenzado el intento", "Intento abandonado", "Tiempo límite del cuestionario excedido" 
-#d_8 <- data %>% 
-#  filter(str_detect(`Nombre evento`, '[Ii]ntento|exc'),
-#  !str_detect(`Nombre evento`, '[Vv]is|ac|ti[ec]|ca'))
-
-#unique(d_8$`Nombre evento`)
 
 d_8 <- data[,-(8:10)]
 d_8 <- d_8[,-6]
