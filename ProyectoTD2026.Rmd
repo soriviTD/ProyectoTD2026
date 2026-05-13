@@ -265,15 +265,14 @@ data_mensual <- data %>% mutate(Mes_Num = as.factor(month(Fecha))) %>%
 ggplot(data_mensual, aes(x = Mes_Num, y = n)) + geom_col(fill = "steelblue") +
   labs(title = "Evolución de la actividad por meses", x = "Meses", y = "Total de registros") +
   theme_minimal()
+
 ```
 
 ```{r}
 #Pregunta 5:  ¿Hay actividad registrada en horarios atípicos (madrugada, festivos)?
 
-# Analizamos la columna 'Hora' que ya está en formato hms
 actividad_madrugada <- data %>% mutate(solo_hora = hour(Hora)) %>% filter(solo_hora >= 0 & solo_hora <= 6)
 
-# Contamos cuántos eventos hay por cada hora de madrugada
 conteo_horas <- actividad_madrugada %>% count(solo_hora)
 conteo_horas
 
