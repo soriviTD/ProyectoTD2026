@@ -9,8 +9,11 @@ author:
 output:
   rticles::mdpi_article:
     extra_dependencies: longtable
+
   bookdown::html_document2: default
-  bookdown::pdf_document2: default
+
+  bookdown::pdf_document2:
+    fig_caption: true
 type: article
 simplesummary: |
   En este proyecto de Tratamiento de los Datos se explora un conjunto de datos
@@ -28,6 +31,10 @@ header-includes:
   - \usepackage{float}
   - \providecommand{\pandocbounded}[1]{#1}
 ---
+
+```{r include=FALSE}
+knitr::opts_chunk$set(fig.pos = 'H')
+```
 
 
 ```{r Librerías, include=FALSE}
@@ -48,7 +55,6 @@ ncol(data)
 colnames(data)
 str(data)
 lapply(data, class)
-
 ```
 
 ```{r include=FALSE}
@@ -87,14 +93,10 @@ horaPico<- ggplot(eventos_hora, aes(x = hora_dia, y = n)) +
     y="Número de eventos"
   )
 #En la Figura \@ref(fig:figura-horapico) se observa que la hora pico de acceso es las 9:00 con 16192.
- 
-
-
 ```
 
 
 ```{r Agregado pregunta 1, include=FALSE}
-
 d <- data %>% filter(`Componente` == 'Asistencia')
 unique(d$`Nombre evento`)
 
@@ -154,7 +156,6 @@ eventosdia<- ggplot(eventos_dia,
     x="Día",
     y="Número de eventos"
   )
-
 ```
 
 
@@ -165,7 +166,6 @@ eventosdia<- ggplot(eventos_dia,
 data %>% summarise(total_eventos = n())
 
 # El conjunto de datos contiene un total de 109.746 eventos registrados en total
-
 ```
 
 ```{r figura-usuariostop, fig.cap="Top 3 usuarios con más actividad", include=FALSE}
@@ -195,66 +195,46 @@ Top3<-ggplot(usuarios_top, aes(x = reorder(Usuario, n), y = n)) +
 #En la Figura \@ref(fig:figura-usuariostop) se observan los tres usuarios con mayor actividad y sus registros
 ```
 
-```{r Pregunta 4, eval=FALSE, include=FALSE}
+```{r Pregunta 4, echo=FALSE}
 #¿Cómo ha evolucionado la actividad a lo largo de los meses?
 
-# Carga y preparación inicial (basada en tu archivo .Rmd)
-data <- read_csv("data/logs_moodle_anon.csv")
-data$Hora_dt <- dmy_hms(data$Hora) # Convertir a formato fecha-hora completo
-data <- data %>% mutate(Mes = floor_date(Hora_dt, "month"))
+data_mensual <- data %>% mutate(Mes_Num = as.factor(month(Fecha))) %>%
+  group_by(Mes_Num) %>% summarise(n = n())
 
-# Evolución mensual
-evolucion_mensual <- data %>%
-  count(Mes) %>%
-  arrange(Mes)
-
-# Gráfico de evolución
-ggplot(evolucion_mensual, aes(x = Mes, y = n)) +
-  geom_line(color = "blue", size = 1) +
-  geom_point() +
-  labs(title = "Evolución de la Actividad Mensual", x = "Mes", y = "Número de Eventos") +
+ggplot(data_mensual, aes(x = Mes_Num, y = n)) + geom_col(fill = "steelblue") +
+  labs(title = "Evolución de la actividad por meses", x = "Meses", y = "Total de registros") +
   theme_minimal()
 ```
 
-```{r Pregunta 5, eval=FALSE, include=FALSE}
+
+```{r Pregunta 5, echo=FALSE}
 #¿Hay actividad registrada en horarios atípicos (madrugada, festivos)?
+actividad_madrugada <- data %>% mutate(solo_hora = hour(Hora)) %>% filter(solo_hora >= 0 & solo_hora <= 6)
 
-actividad_horaria <- data %>%
-  mutate(
-    # Creamos las variables necesarias dentro del pipe para evitar errores
-    Fecha_DT = dmy_hms(Hora),
-    Hora_Solo = hour(Fecha_DT),
-    Dia_Semana = wday(Fecha_DT, label = TRUE, abbr = FALSE)
-  ) %>%
-  mutate(Tipo_Horario = case_when(
-    Hora_Solo >= 0 & Hora_Solo <= 6 ~ "Madrugada",
-    Dia_Semana %in% c("sábado", "domingo") ~ "Fin de Semana",
-    TRUE ~ "Horario Habitual"
-  ))
-
-resumen_atipico <- actividad_horaria %>%
-  count(Tipo_Horario) %>%
-  mutate(Porcentaje = n / sum(n) * 100)
-resumen_atipico
+conteo_horas <- actividad_madrugada %>% count(solo_hora)
+conteo_horas
 ```
 
-```{r Pregunta 6, eval=FALSE, include=FALSE}
+```{r Pregunta 6, echo=FALSE}
 #¿Predomina la consulta de recursos o la interacción activa?
 
 data_tipo <- data %>%
-  mutate(Categoria = case_when(
-    str_detect(`Nombre evento`, "visto|visualizado|visto") ~ "Consulta (Recursos)",
-    str_detect(`Nombre evento`, "enviado|subido|creado|entregado|confirmada") ~ "Interacción (Activa)",
-    TRUE ~ "Otros"
-  ))
+  mutate(Categoria = ifelse(`Nombre evento` == "Módulo de curso visto" | 
+                              `Nombre evento` == "Curso visto" |
+                              `Nombre evento` == "Carpeta vista" |
+                              `Nombre evento` == "Recurso visto", 
+                            "Consulta de recursos", "Interacción activa"))
 
-# Proporción de actividad
-tabla_comparativa <- data_tipo %>%
-  group_by(Categoria) %>%
-  summarise(Total = n()) %>%
-  mutate(Porcentaje = (Total / sum(Total)) * 100)
-tabla_comparativa
+resumen_tipo <- data_tipo %>% 
+  group_by(Categoria) %>% 
+  summarise(Total = n())
 
+ggplot(resumen_tipo, aes(x = Categoria, y = Total, fill = Categoria)) +
+  geom_col() + 
+  labs(title = "Comparativa Real: Consulta vs Interacción", 
+       x = "Tipo de actividad", 
+       y = "Número de registros") + 
+  theme_minimal()
 ```
 
 ```{r Ejercicio 7, include=FALSE}
@@ -410,8 +390,6 @@ data_14_grafico <- ggplot(data_14, aes(x = reorder(`Contexto del evento`, Distin
   labs(title = "Top 15 tareas con más interacciones de usuarios",
        x = "Tarea",
        y = "Usuarios distintos")
-
-  
 ```
 
 ```{r Ejercicio 15, include=FALSE}
@@ -430,7 +408,6 @@ data_15_grafico <- ggplot(data_15, aes(x = "", y = n, fill = Afectado)) +
   labs(title = "Eventos con y sin usuario afectado",
        fill = "Tipo") +
   theme_void()
-  
 ```
 
 ```{r include=FALSE}
@@ -520,21 +497,29 @@ Hemos puesto solo top3, porque apartir del Top 3 todos los alumnos registraban m
 
 # Pregunta 4: ¿Cómo ha evolucionado la actividad a lo largo de los meses?
 
-La actividad en la plataforma no es lineal; presenta una evolución marcada por el calendario académico. Al analizar los datos, observamos que los registros comienzan con la configuración del curso (en los meses de verano), pero el volumen real de interacciones despega en septiembre/octubre.
+Para analizar la evolución a lo larga de los meses, he utilizado la columna Fecha.
+En primer lugar, extraje el número de cada mes y los convertí en categorías mediante as.factor().
+Para que después, al representar la gráfica poder ver una barra para cada mes y no hubiera valores decimales.
 
-Existen picos de actividad muy claros que coinciden con los periodos de evaluación (como se observa en enero y febrero). Esta evolución demuestra que la plataforma funciona como un repositorio de consulta constante, pero cuya intensidad de uso se multiplica exponencialmente cuando se acercan las fechas límite de entrega de tareas.
-
+En el gráfico vemos una distribución anómala, ya que de agosto a diciembre los registros son prácticamente cero.
+La actividad real comienza en enero y alcanza su pico en febrero con más de 25.000 eventos.
+Estos resultados indican que en el dataset utilizado, el periodo de mayor carga académica (exámenes y entregas) es en el primer semestre del año (de enero a junio).
 
 # Pregunta 5: ¿Hay actividad registrada en horarios atípicos (madrugada, festivos)?
 
-Los datos confirman que existe una actividad significativa en horarios atípicos. Se registran accesos constantes en la franja de 00:00 a 02:00 madrugada, lo que sugiere que una parte del estudiantado prefiere trabajar en horas de bajo tráfico o conciliar el estudio con otras actividades.
-Aunque el grueso de la actividad ocurre de lunes a viernes en horario de mañana y tarde, los registros de madrugada suelen estar vinculados a la visualización de materiales de última hora. Esta "actividad atípica" es un indicador de la flexibilidad de la enseñanza virtual, permitiendo al alumno acceder al contenido 24/7 independientemente de los horarios institucionales.
+Para comprobar si el aula virtual se usa en horarios atípicos, usé la columna Hora.
+Utilicé la función mutate() para obtener el valor numérico de cada hora de registro y usé filter() para seleccionar las interacciones hechas en la madrugada (de 00:00 a 06:00).
+Por último, obtuve el número total de eventos por cada hora con la función count().
+
+El análisis confirma que existe una actividad constante durante la madrugada. Aunque el volumen de interacciones es significativamente menor que durante las horas punta de la mañana (como las 9:00), se detectan registros en todas las horas analizadas. Esto demuestra que el aula virtual ofrece la flexibilidad necesaria para que los estudiantes adapten su ritmo de estudio y realicen consultas o entregas en horarios nocturnos según su disponibilidad personal.
 
 # Pregunta 6: ¿Predomina la consulta de recursos o la interacción activa?
 
-El análisis muestra un claro predominio de la consulta de recursos sobre la interacción activa. En la mayoría de los logs de Moodle, aproximadamente el 80-90% de los registros corresponden a acciones de visualización (como "Curso visto" o "Módulo de curso visto").
+Para este análisis, he clasificado los registros en dos categorías. He etiquetado como "Consulta de recursos" los eventos base de visualización ("Módulo de curso visto" y "Curso visto") y como "Interacción activa" el resto de la actividad registrada. Para ello, he utilizado la función mutate() con ifelse() y he generado un resumen de totales con summarise() para después generar la gráfica.
 
-Esto es un comportamiento estándar: un alumno suele consultar muchas veces un recurso (leer apuntes, revisar enunciados) antes de realizar una única acción de interacción (enviar la tarea). Por tanto, aunque la "interacción activa" es el objetivo final de la evaluación, el tráfico masivo de la plataforma lo genera el consumo de información. Solo un pequeño grupo de usuarios muy activos (como los que veríamos en un Top 3 de actividad) rompe ligeramente esta tendencia al generar muchos eventos de interacción en comparación con sus compañeros.
+Los resultados muestran que, sorprendentemente, hay más interacción activa que consulta de recursos.
+Pero después de analizarlo bien, me he dado cuenta que es porque el sistema Moodle registra como interacción activa cualquier clic que no sea ver el curso, por lo que predomina la interacción activa sobre la consulta de recursos. 
+Por tanto, la plataforma no solo se usa para leer contenidos sino que genera un conjunto de pequeñas acciones dinámicas de los alumnos.
 
 # Pregunta 7: Media de entrada por usuario.
 
