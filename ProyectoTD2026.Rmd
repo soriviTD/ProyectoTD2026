@@ -1,16 +1,16 @@
 ---
 title: "Miniproyecto"
 author:
-- name: Andreu Fuentes Ponce
-- name: Mario Izquierdo Puchades
-- name: Sofia Rivera Vidal
-- name: Marta Sisternas Ruíz
-- name: Belinda Villalta Lillo
+  - "Andreu Fuentes Ponce"
+  - "Mario Izquierdo Puchades"
+  - "Sofia Rivera Vidal"
+  - "Marta Sisternas Ruíz"
+  - "Belinda Villalta Lillo"
 output:
+  bookdown::pdf_document2: default
+  bookdown::html_document2: default
   rticles::mdpi_article:
     extra_dependencies: longtable
-  bookdown::html_document2: default
-  bookdown::pdf_document2: default
 type: article
 simplesummary: |
   En este proyecto de Tratamiento de los Datos se explora un conjunto de datos
