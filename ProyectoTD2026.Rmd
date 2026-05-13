@@ -466,7 +466,7 @@ data_16 <- data %>%
 
 data_16_grafico <-ggplot(data_16, aes(x = reorder(Componente, interacciones), y = interacciones)) + 
   geom_bar(stat = "identity", fill = "red") +
-  labs(title = "Top 10 componentes que generan mas interacciones entre usuarios",
+  labs(title = "Componentes que generan mas interacciones entre usuarios",
          x = "Componentes",
          y = "Num. interacciones")
   
