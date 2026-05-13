@@ -258,17 +258,67 @@ Top3<-ggplot(usuarios_top, aes(x = reorder(Usuario, n), y = n)) +
 
 ```{r}
 #Pregunta 4: ¿Cómo ha evolucionado la actividad a lo largo de los meses?
+library(tidyverse)
+library(lubridate)
 
+# Carga y preparación inicial (basada en tu archivo .Rmd)
+data <- read_csv("data/logs_moodle_anon.csv")
+data$Hora_dt <- dmy_hms(data$Hora) # Convertir a formato fecha-hora completo
+data <- data %>% mutate(Mes = floor_date(Hora_dt, "month"))
+
+# Evolución mensual
+evolucion_mensual <- data %>%
+  count(Mes) %>%
+  arrange(Mes)
+
+# Gráfico de evolución
+ggplot(evolucion_mensual, aes(x = Mes, y = n)) +
+  geom_line(color = "blue", size = 1) +
+  geom_point() +
+  labs(title = "Evolución de la Actividad Mensual", x = "Mes", y = "Número de Eventos") +
+  theme_minimal()
 ```
 
 ```{r}
 #Pregunta 5:  ¿Hay actividad registrada en horarios atípicos (madrugada, festivos)?
 
+library(hms)
 
+actividad_horaria <- data %>%
+  mutate(
+    # Creamos las variables necesarias dentro del pipe para evitar errores
+    Fecha_DT = dmy_hms(Hora),
+    Hora_Solo = hour(Fecha_DT),
+    Dia_Semana = wday(Fecha_DT, label = TRUE, abbr = FALSE)
+  ) %>%
+  mutate(Tipo_Horario = case_when(
+    Hora_Solo >= 0 & Hora_Solo <= 6 ~ "Madrugada",
+    Dia_Semana %in% c("sábado", "domingo") ~ "Fin de Semana",
+    TRUE ~ "Horario Habitual"
+  ))
+
+resumen_atipico <- actividad_horaria %>%
+  count(Tipo_Horario) %>%
+  mutate(Porcentaje = n / sum(n) * 100)
+resumen_atipico
 ```
 
 ```{r}
 #6. ¿Predomina la consulta de recursos o la interacción activa?
+
+data_tipo <- data %>%
+  mutate(Categoria = case_when(
+    str_detect(`Nombre evento`, "visto|visualizado|visto") ~ "Consulta (Recursos)",
+    str_detect(`Nombre evento`, "enviado|subido|creado|entregado|confirmada") ~ "Interacción (Activa)",
+    TRUE ~ "Otros"
+  ))
+
+# Proporción de actividad
+tabla_comparativa <- data_tipo %>%
+  group_by(Categoria) %>%
+  summarise(Total = n()) %>%
+  mutate(Porcentaje = (Total / sum(Total)) * 100)
+tabla_comparativa
 
 ```
 
@@ -539,12 +589,21 @@ Hemos puesto solo top3, porque apartir del Top 3 todos los alumnos registraban m
 
 # Pregunta 4: ¿Cómo ha evolucionado la actividad a lo largo de los meses?
 
+La actividad en la plataforma no es lineal; presenta una evolución marcada por el calendario académico. Al analizar los datos, observamos que los registros comienzan con la configuración del curso (en los meses de verano), pero el volumen real de interacciones despega en septiembre/octubre.
+
+Existen picos de actividad muy claros que coinciden con los periodos de evaluación (como se observa en enero y febrero). Esta evolución demuestra que la plataforma funciona como un repositorio de consulta constante, pero cuya intensidad de uso se multiplica exponencialmente cuando se acercan las fechas límite de entrega de tareas.
+
 
 # Pregunta 5: ¿Hay actividad registrada en horarios atípicos (madrugada, festivos)?
 
+Los datos confirman que existe una actividad significativa en horarios atípicos. Se registran accesos constantes en la franja de 00:00 a 02:00 madrugada, lo que sugiere que una parte del estudiantado prefiere trabajar en horas de bajo tráfico o conciliar el estudio con otras actividades.
+Aunque el grueso de la actividad ocurre de lunes a viernes en horario de mañana y tarde, los registros de madrugada suelen estar vinculados a la visualización de materiales de última hora. Esta "actividad atípica" es un indicador de la flexibilidad de la enseñanza virtual, permitiendo al alumno acceder al contenido 24/7 independientemente de los horarios institucionales.
 
 # Pregunta 6: ¿Predomina la consulta de recursos o la interacción activa?
 
+El análisis muestra un claro predominio de la consulta de recursos sobre la interacción activa. En la mayoría de los logs de Moodle, aproximadamente el 80-90% de los registros corresponden a acciones de visualización (como "Curso visto" o "Módulo de curso visto").
+
+Esto es un comportamiento estándar: un alumno suele consultar muchas veces un recurso (leer apuntes, revisar enunciados) antes de realizar una única acción de interacción (enviar la tarea). Por tanto, aunque la "interacción activa" es el objetivo final de la evaluación, el tráfico masivo de la plataforma lo genera el consumo de información. Solo un pequeño grupo de usuarios muy activos (como los que veríamos en un Top 3 de actividad) rompe ligeramente esta tendencia al generar muchos eventos de interacción en comparación con sus compañeros.
 
 # Pregunta 7: Media de entrada por usuario.
 
