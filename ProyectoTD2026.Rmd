@@ -1,11 +1,11 @@
 ---
 title: "Miniproyecto"
 author:
-  - "Andreu Fuentes Ponce"
-  - "Mario Izquierdo Puchades"
-  - "Sofia Rivera Vidal"
-  - "Marta Sisternas Ruíz"
-  - "Belinda Villalta Lillo"
+  - name: "Andreu Fuentes Ponce"
+  - name: "Mario Izquierdo Puchades"
+  - name: "Sofia Rivera Vidal"
+  - name: "Marta Sisternas Ruíz"
+  - name: "Belinda Villalta Lillo"
 output:
   rticles::mdpi_article:
     extra_dependencies: longtable
@@ -22,21 +22,11 @@ abstract: "El propósito de este estudio es conocer las actitudes y los patrones
   la media.\n"
 keywords: "keyword 1; keyword 2; keyword 3 (list three to ten pertinent keywords specific
   \nto the article, yet reasonably common within the subject discipline.).\n"
-abbreviations:
-- short: MDPI
-  long: Multidisciplinary Digital Publishing Institute
-- short: DOAJ
-  long: Directory of open access journals
-- short: TLA
-  long: Three letter acronym
-- short: LD
-  long: linear dichroism
 bibliography: mybibfile.bib
-appendix: appendix.tex
 endnotes: false
-header-includes: \providecommand{\pandocbounded}[1]{#1}
-authorcitation: |
-  Leutnant, D.; Doe, J.
+header-includes:
+  - \usepackage{float}
+  - \providecommand{\pandocbounded}[1]{#1}
 ---
 
 
@@ -60,10 +50,6 @@ str(data)
 lapply(data, class)
 
 ```
-El dataset está compuesto por un total de 109.746 observaciones (filas) y 10 variables (columnas).
-Las variables incluidas en el conjunto de datos son: Hora, Nombre completo del usuario, Usuario afectado, Contexto del evento, Componente y Nombre evento, Descripción, Origen, y Dirección IP.
-Antes de ser tratadas, todas la variables aparecen como categóricas de tipo carácter (character).
-
 
 ```{r include=FALSE}
 #Corrección de la columna "Hora" para que tenga formato. División de esta en "Fecha" y "Hora".
@@ -78,9 +64,6 @@ data$Hora <- as_hms(data$Hora)
 colnames(data)[3] <- 'Usuario'
 colnames(data)[4] <- 'Usuario_afectado'
 ```
-Una vez arregladas algunas columnas, la columna de 'Hora' se ha separado en 'Fecha' y 'Hora'.
-En cuanto a los tipos de datos, la fecha es Date y hora hms. El resto de ellas se mantienen como de tipo carácter.
-
 
 ```{r figura-horapico, fig.cap="Distribución de eventos por hora del día", include=FALSE}
 #1. ¿Cuál es la hora pico de acceso? ¿qué día de la semana hay más actividad?
@@ -175,9 +158,6 @@ eventosdia<- ggplot(eventos_dia,
 ```
 
 
-
-
-
 ```{r include=FALSE}
 #2. ¿Cuántos eventos totales hay?
 # Cada fila es un evento, así que basta contar observaciones:
@@ -187,8 +167,6 @@ data %>% summarise(total_eventos = n())
 # El conjunto de datos contiene un total de 109.746 eventos registrados en total
 
 ```
-
-
 
 ```{r figura-usuariostop, fig.cap="Top 3 usuarios con más actividad", include=FALSE}
 #3. ¿Cuántos usuarios distintos aparecen?
@@ -279,7 +257,6 @@ tabla_comparativa
 
 ```
 
-
 ```{r Ejercicio 7, include=FALSE}
 frecuencias <- sort(table(data$Usuario), decreasing=TRUE)
 
@@ -347,7 +324,7 @@ d_8_2 <- d_8_1 %>%
   summarize(Intentos = n())
 d_8_2 <- d_8_2 %>% mutate(`Contexto del evento` = str_remove_all(`Contexto del evento`, '[Cc]uestionario|:| +'))
 d_8_2 <- d_8_2[c(12, 2, 11, 3, 8, 4, 9, 5, 6, 10, 7, 1), ]
-grafico_ej_8_2 <- ggplot(d_8_2, aes(x=str_remove(`Contexto del evento`, 'Cuestionario: '), y=Intentos)) + geom_point() + theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) + scale_x_discrete(label = n) + labs(x = "Cuestionario")
+grafico_ej_8_2 <- ggplot(d_8_2, aes(x=str_remove(`Contexto del evento`, 'Cuestionario: '), y=Intentos)) + geom_point() + theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) + labs(x = "Cuestionario")
 
 #Cantidad de cuestionarios abandonados.
 d_8_3 <- d_8 %>% filter(`Nombre evento` == 'Intento abandonado')
@@ -469,10 +446,7 @@ data_16_grafico <-ggplot(data_16, aes(x = reorder(Componente, interacciones), y 
   labs(title = "Componentes que generan mas interacciones entre usuarios",
          x = "Componentes",
          y = "Num. interacciones")
-  
 ```
-
-
 
 # Introducción
 
@@ -482,18 +456,25 @@ Esta parte del proyecto consiste en identificar la hora pico de acceso y el día
 
 Para ello se ha utilizado herramientas de manipulación y visualización de datos para responder a estas preguntas de forma exploratoria.
 
+El dataset está compuesto por un total de 109.746 observaciones y 10 variables.
+Las variables incluidas en el conjunto de datos son: Hora, Nombre completo del usuario, Usuario afectado, Contexto del evento, Componente y Nombre evento, Descripción, Origen, y Dirección IP.
+Antes de ser tratadas, todas la variables aparecen como categóricas de tipo carácter.
+
+Una vez arregladas algunas columnas, la columna de 'Hora' se ha separado en 'Fecha' y 'Hora'.
+En cuanto a los tipos de datos, la fecha es Date y hora hms. El resto de ellas se mantienen como de tipo carácter.
+
 # Pregunta 1: Hora pico de acceso y día con mayor actividad
 
-```{r}
-horaPico
+```{r fig1, echo=FALSE, fig.cap="Eventos por hora del día.\\label{fig:fig1}", fig.height=4, fig.width=4, fig.pos = 'H'}
+horaPico + labs(title = "")
 ```
 
 Para responder a esta cuestión se partió de la variable temporal del dataset, que previamente fue transformada para separar correctamente la fecha y la hora de cada registro.
 
 A partir de la hora de cada evento, se agruparon los registros por franjas horarias y se contabilizó el número de accesos producidos en cada una de ellas. Este análisis permitió identificar la hora con mayor volumen de actividad (hora pico), que resultó ser las 9:00 horas, coincidiendo con el horario habitual de inicio de las clases.
 
-```{r}
-eventosdia
+```{r fig2, echo=FALSE, fig.cap="Eventos por día de la semana.\\label{fig:fig2}", fig.height=4, fig.width=4, fig.pos = 'H'}
+eventosdia + labs(title = "")
 ```
 
 Del mismo modo, a partir de la variable fecha, se extrajo el día de la semana correspondiente a cada evento y se agruparon los registros según dicho criterio. Los resultados muestran que el miércoles es el día con mayor actividad registrada dentro de la plataforma.
@@ -501,10 +482,10 @@ Del mismo modo, a partir de la variable fecha, se extrajo el día de la semana c
 Para representar los resultados se utilizaron gráficos de barras, ya que permiten visualizar de forma clara la distribución temporal de los eventos y facilitan la comparación entre franjas horarias y días de la semana. 
 
 
-##Pregunta 1.1: Hora con mas asistencias registradas
+## Pregunta 1.1: Hora con mas asistencias registradas
 
-```{r}
-Asistencia
+```{r fig3, echo=FALSE, fig.cap="Distribución de asistencia por hora .\\label{fig:fig1}", fig.height=4, fig.width=4, fig.pos = 'H'}
+Asistencia+ labs(title="")
 ```
 
 con el objetivo de estudiar el comportamiento de los registros de asistencia en la plataforma, se filtraron únicamente aquellos eventos pertenecientes al componente “Asistencia”. Posteriormente, se seleccionaron los eventos relacionados con acciones de control de asistencia mediante un filtrado sobre el nombre del evento.
@@ -525,8 +506,8 @@ A partir de ello, se obtuvo el número total de eventos presentes en el conjunto
 Este valor permite hacerse una idea del volumen de actividad generado en la plataforma y confirma que el conjunto de datos dispone de un tamaño suficientemente amplio para realizar análisis estadísticos y detectar patrones de comportamiento.
 
 # Pregunta 3: Usuarios distintos y usuarios con mayor actividad
-```{r}
-Top3
+```{r fig4, echo=FALSE, fig.cap="Top 3 usuarios con más actividad.\\label{fig:fig4}", fig.height=4, fig.width=4, fig.pos = 'H'}
+Top3 + labs(title="")
 ```
 
 
@@ -557,13 +538,13 @@ Esto es un comportamiento estándar: un alumno suele consultar muchas veces un r
 
 # Pregunta 7: Media de entrada por usuario.
 
-```{r fig2, echo=FALSE, fig.cap="Comparación entre días totales y únicamente los de acceso.\\label{fig:fig2}", fig.width=3}
+```{r fig5, echo=FALSE, fig.cap="Comparación entre días totales y únicamente los de acceso.\\label{fig:fig5}", fig.height=4, fig.width=4, fig.pos = 'H'}
 grafico_ej_7_1 + grafico_ej_7_2
 ```
 
 Viendo el gráfico \ref{fig:fig2} se puede observar que la mayoría de los alumnos se han conectado la mitad de los días que han tenido acceso (entendiendo esto como los días desde el primer acceso hasta el último). Además se puede ver que en ambos casos el usuario con más accesos es también el que más días ha tenido acceso. Pese a esto, contabilizando únicamente los días que realmente ha accedido a la página, se puede ver que ha accedido más o menos la misma cantidad de días que la media de los usuarios pero ha realizado muchas más acciones. Además, se observa que los usuarios que más días han accedido al aula virtual, son también los que más acciones han realizado.
 
-```{r fig3, echo=FALSE, fig.width=3, fig.cap="A figure added with a code chunk.\\label{fig:fig3}"}
+```{r fig6, echo=FALSE, fig.cap="Comparación de usuarios por cantidad de accesos.\\label{fig:fig6}", fig.height=4, fig.width=4, fig.pos = 'H'}
 grafico_ej_7_3
 ```
 
@@ -572,13 +553,13 @@ En esta otra figura ( \ref{fig:fig3}) se observa que la mayoría de las personas
 
 # Pregunta 8: ¿Cuántos intentos de cuestionario hace de media cada estudiante?
 
-```{r fig4, fig.width=3, fig.cap = 'Intentos_cuestionario/Usuario', echo=FALSE}
+```{r fig7, echo=FALSE, fig.cap='Intentos_cuestionario/Usuario\\label{fig:fig7}', fig.height=4, fig.width=4, fig.pos = 'H'}
 grafico_ej_8_1
 ```
 
 La figura \ref(fig:4) pretende mostrar la relación entre la cantidad de intentos realizados y los usuarios. De esta forma se observa que la mayoría ha realizado al menos un intento por cuestionario (pese a que no se puede estar completamente seguros de que hayan realizado todos los cuestionarios). Además, hay algunos usuarios que viendo este gráfico se sabe que habrá mínimo uno que no habrán realizado, estos son los que están por debajo de la línea punteada.
 
-```{r fig5, fig.width=3, fig.cap = 'Intentos por cuestionario', echo=FALSE}
+```{r fig9, echo=FALSE, fig.cap="Intentos por cuestionario.\\label{fig:fig9}", fig.height=4, fig.width=4, fig.pos = 'H'}
 grafico_ej_8_2
 ```
 
@@ -600,7 +581,7 @@ En esta tabla se observan las diez acciones que más se han realizado. Es sorpre
 
 # Pregunta 10: ¿Desde cuántas IPs distintas se conecta un mismo usuario? ¿Hay alguna ilógica?
 
-```{r fig10,fig.width=3,fig.cap ='Numero de IPs por Usuario',echo=FALSE}
+```{r fig10, echo=FALSE, fig.cap='Numero de IPs por Usuario\\label{fig:fig10}', fig.height=4, fig.width=4, fig.pos = 'H'}
 g_10
 ```
 
@@ -611,7 +592,9 @@ En el caso de este conjunto de datos, tenemos un outlier que cuenta con mas de 1
 
 # Pregunta 11: ¿Existen IPs compartidas por muchos usuarios?
 ```{r t_11, echo=FALSE}
-t_11
+knitr::kable(t_11, 
+             caption = "Frecuencia de IP según cantidad de usuarios", 
+             booktabs = TRUE)
 ```
 
 Como podemos ver en la tabla \ref(tab:t_11), la gran mayoria de las IPs tienen pocos usuarios que las hayan utilizado, esto se debe al poco uso de ordenadores alojados en la universidad, ademas de que comunmente no se les olvidan a los alumnos el portatil o el dispositivo donde acceden al aula virtual.
@@ -622,7 +605,7 @@ A parte, podemos ver como una IP si que es utilizada por 4 personas, esta es pos
 
 # Pregunta 12: ¿Qué porcentaje de usuarios accede desde redes móviles y cuántos desde redes fijas?
 
-```{r f_12, echo=FALSE, fig.cap='Accesos mediante red movil o fija', fig.width=3}
+```{r f_11, echo=FALSE, fig.cap='Accesos mediante red movil o fija\\label{fig:fig11}', fig.height=3, fig.pos='H', fig.width=3}
 g_12
 ```
 
@@ -634,8 +617,8 @@ Por ello hemos clasificado las diferentes IPs segun su tipo (representacion en l
 
 
 # Pregunta 13:  ¿Cuáles son los 10 eventos más frecuentes en el dataset?
-```{r echo=FALSE}
-data_13_grafico
+```{r fig12, echo=FALSE, fig.cap='Top 10 eventos más frecuentes\\label{fig:fig12}', fig.height=4, fig.width=5, fig.pos = 'H'}
+data_13_grafico + labs(title="")
 ```
 Para esta parte del análisis se identificaron los 10 eventos más frecuentes registrados en el dataset. Para ello se contabilizó el número de ocurrencias de cada tipo de evento y se ordenaron de mayor a menor frecuencia.
 El evento más frecuente es "Módulo de curso visto", con más de 22.000 registros, seguido de "Curso visto" con alrededor de 20.000. Ambos eventos destacan claramente sobre el resto, lo que indica que la actividad predominante en la plataforma es la consulta y visualización de contenidos.
@@ -645,8 +628,10 @@ Esto refleja que los usuarios de la plataforma tienen un comportamiento predomin
 
 # Pregunta 14: ¿Cuales son las tareas con mas interacciones de usuarios del curso?
 ```{r echo=FALSE}
-data_14
-data_14_grafico
+data_14 <- data_14 %>% mutate(`Contexto del evento` = str_remove_all(`Contexto del evento`, 'Tarea: '))
+knitr::kable(data_14, 
+             caption = "Tareas con más entregas (por usuarios distintos)", 
+             booktabs = TRUE)
 ```
 Para esta parte del análisis se estudió cuántos usuarios distintos han interactuado con cada tarea del curso. Para ello se filtraron los eventos del componente "Tarea", se agruparon por contexto del evento y se contó el número de usuarios únicos en cada uno.
 
@@ -657,10 +642,10 @@ En general se observa que las tareas evaluables y obligatorias concentran la may
 
 # Pregunta 15: ¿Cuantos eventos tienen usuario afectado y cuántos no?
 
-```{r echo=FALSE}
-data_15
-data_15_grafico
+```{r fig13, echo=FALSE, fig.cap='Comparación de eventos según si tiene usuario afectado\\label{fig:fig13}', fig.height=4, fig.width=4, fig.pos = 'H'}
+data_15_grafico + labs(title="")
 ```
+
 Para esta parte del análisis se estudió qué proporción de los eventos registrados en el dataset implican una interacción sobre otro usuario, es decir, tienen un valor en la columna Usuario afectado, y cuántos no.
 
 Para ello se clasificó cada evento en dos categorías: "Con usuario afectado" cuando la columna no era NA, y "Sin usuario afectado" cuando sí lo era. A continuación se calculó el porcentaje de cada grupo sobre el total de eventos.
@@ -669,16 +654,17 @@ Los resultados muestran que 69.346 eventos, un 63.2% del total, no tienen usuari
 
 # Pregunta 16: ¿Qué componentes generan más interacciones entre usuarios (usuario afectado distinto del usuario que realiza la acción)?
 ```{r echo=FALSE}
-data_16
-data_16_grafico
+knitr::kable(data_16, 
+             caption = "Interacciones generadas según componente", 
+             booktabs = TRUE)
 ```
+
+```{r fig20, echo=FALSE, fig.cap='Interacciones generadas según componente\\label{fig:fig20}', fig.height=4, fig.width=4, fig.pos = 'H'}
+data_16_grafico + labs(title="")
+```
+
 En esta pregunta se busca averiguar cuales son los componentes que generan mas interacciones entre usuarios distintos. Es decir, situaciones en las que el usuario que realiza la acción es diferente al usuario afectado. Para ello se filtraron los eventos donde Usuario afectado no era NA y además era distinto del usuario que realizaba la acción, agrupamos por componente y por ultimo contamos el numero de interacciones de cada uno.
 
 Los resultados muestran que únicamente 6 componentes generan este tipo de interacciones. El componente "Sistema" es con diferencia el más destacado, con 14.013 interacciones entre usuarios distintos, seguido de "Tarea" con 1.453. El resto de componentes, "Cuestionario" con 175, "Usuario" con 37, "Registros" con 3 y "Foro" con 1, tienen una presencia muy inferior.
 
 Esto indica que la mayor parte de las interacciones entre usuarios en la plataforma se producen a través del Sistema, probablemente relacionadas con acciones administrativas del profesor sobre los alumnos.
-
-
-
-
-
