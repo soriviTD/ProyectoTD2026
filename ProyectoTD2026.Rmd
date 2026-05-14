@@ -20,15 +20,12 @@ simplesummary: |
   real con el fin de extraer información, cuanto menos interesante, de ellos.
 abstract: "El propósito de este estudio es conocer las actitudes y los patrones de
   los\nusuarios de la plataforma durante el curso. Hemos utilizado principalmente
-  los\nrecursos aprendidos en el aula. Hemos podido concluir que la mayoría de los\nalumnos
-  se comportan de manera similar, siendo que ninguno destaca \nexcepcionalmente sobre
-  la media.\n"
-keywords: "keyword 1; keyword 2; keyword 3 (list three to ten pertinent keywords specific
-  \nto the article, yet reasonably common within the subject discipline.).\n"
+  los\nrecursos aprendidos en el aula.
 bibliography: mybibfile.bib
 endnotes: false
 header-includes:
   - \usepackage{float}
+  - \usepackage{placeins}
   - \providecommand{\pandocbounded}[1]{#1}
 ---
 
@@ -218,30 +215,36 @@ conteo_horas <- actividad_madrugada %>% count(solo_hora)
 #¿Predomina la consulta de recursos o la interacción activa?
 
 data_tipo <- data %>%
-  mutate(Categoria = ifelse(`Nombre evento` == "Módulo de curso visto" | 
-                              `Nombre evento` == "Curso visto" |
-                              `Nombre evento` == "Carpeta vista" |
-                              `Nombre evento` == "Recurso visto", 
+  mutate(Categoría = ifelse(str_detect(`Nombre evento`, ".+[Vv]is.+"), 
                             "Consulta de recursos", "Interacción activa"))
 
 resumen_tipo <- data_tipo %>% 
-  group_by(Categoria) %>% 
+  group_by(Categoría) %>% 
   summarise(Total = n())
 
-plot_6 <- ggplot(resumen_tipo, aes(x = Categoria, y = Total, fill = Categoria)) +
-  geom_col() + 
-  labs(title = "Comparativa Real: Consulta vs Interacción", 
-       x = "Tipo de actividad", 
-       y = "Número de registros") + 
-  theme_minimal()
+total <- sum(resumen_tipo$Total)
+val1 <- round(resumen_tipo$Total[1]/total*100, 1)
+val2 <- 100-val1
+nuevacol <- c(paste0(val1, "%"), paste0(val2, "%"))
+
+resumen_tipo <- resumen_tipo %>% mutate(Porcentaje = nuevacol)
+
+plot_6 <- ggplot(resumen_tipo, aes(x = "", y = Total, fill = Categoría)) +
+  geom_col(width = 1) +
+  coord_polar(theta = "y") +
+  labs(x = "", 
+       y = "", 
+       fill = "") +
+  theme_void() + 
+geom_text(aes(label = Porcentaje), 
+            position = position_stack(vjust = 0.5),
+            color = "white", 
+            size = 5,
+            fontface = "bold")
 ```
 
 ```{r Ejercicio 7, include=FALSE}
 frecuencias <- sort(table(data$Usuario), decreasing=TRUE)
-
-#Si se intenta encontrar a todos lo profesores, usando estos eventos, queda que únicamente hay nueve alumnos y el resto son profesores.
-#eventos_profesores <- c('Copia de curso creada', 'Módulo de curso actualizado', 'Usuario calificado', 'Se ha calificado el envío.', 'Calificación borrada', 'Evento de calendario actualizado', 'Todos los envíos se están descargando.', 'Usuario matriculado en el curso', 'Sección de curso eliminada', 'Sección de curso actualizado', 'Sección del curso creada', 'Curso creado')
-
 
 d_7 <- data[1:3]
 d_7 <- d_7[-2]
@@ -277,6 +280,9 @@ df_ej_7 <- df %>% filter(Usuario!="U0072"&Usuario!="U0001")
 grafico_ej_7_1 <- ggplot(df_ej_7, aes(x=Dias_total, y=Cant_accesos), title) + geom_point() + labs(x = "Días (total)", y = "Accesos")
 #Interacción media por día teniendo en cuenta únicamente los días en los que se ha entrado.
 grafico_ej_7_2 <- ggplot(df_ej_7, aes(x=Dias_neto, y=Cant_accesos)) + geom_point() + labs(x = "Días (neto)", y = "")
+
+cor(df_ej_7$Dias_total, df_ej_7$Cant_accesos) #0.5107027
+cor(df_ej_7$Dias_neto, df_ej_7$Cant_accesos) #0.7855488
 
 #Media de interacciones por usuario.
 grafico_ej_7_3 <- ggplot(df_ej_7, aes(x=Usuario, y=Cant_accesos)) + geom_point() + scale_x_discrete(label = NULL) + theme(axis.ticks = element_blank()) + labs(x = "Usuarios", y = "Accesos")
@@ -404,7 +410,7 @@ data_15 <- data %>%
 data_15_grafico <- ggplot(data_15, aes(x = "", y = n, fill = Afectado)) +
   geom_bar(stat = "identity", width = 1) +
   coord_polar("y") +
-  geom_text(aes(label = etiqueta), position = position_stack(vjust = 0.5)) +
+  geom_text(aes(label = etiqueta), position = position_stack(vjust = 0.5), color="white", size=5, fontface="bold") +
   labs(title = "Eventos con y sin usuario afectado",
        fill = "Tipo") +
   theme_void()
@@ -427,237 +433,202 @@ data_16_grafico <-ggplot(data_16, aes(x = reorder(Componente, interacciones), y 
 
 # Introducción
 
-En este proyecto se ha trabajado con un conjunto de datos procedente de registros de actividad de la plataforma Moodle (logs_moodle_anon.csv), con el objetivo de extraer información relevante a partir de los eventos registrados.
+En este proyecto se ha trabajado con un conjunto de datos procedente de registros de actividad de la plataforma Moodle, con el objetivo de extraer información relevante a partir de los eventos registrados. Para ello se han utilizado herramientas de manipulación y visualización de datos para responder a estas preguntas de forma exploratoria.
 
-Esta parte del proyecto consiste en identificar la hora pico de acceso y el día con mayor actividad, calcular el número total de eventos registrados y analizar cuántos usuarios distintos aparecen en el conjunto de datos.
+El dataset está compuesto por un total de 109.746 observaciones y 10 variables. Este valor permite hacerse una idea del volumen de actividad generado en la plataforma y confirma que el conjunto de datos dispone de un tamaño suficientemente amplio para realizar análisis estadísticos y detectar patrones de comportamiento.
 
-Para ello se ha utilizado herramientas de manipulación y visualización de datos para responder a estas preguntas de forma exploratoria.
-
-El dataset está compuesto por un total de 109.746 observaciones y 10 variables.
 Las variables incluidas en el conjunto de datos son: Hora, Nombre completo del usuario, Usuario afectado, Contexto del evento, Componente y Nombre evento, Descripción, Origen, y Dirección IP.
-Antes de ser tratadas, todas la variables aparecen como categóricas de tipo carácter.
 
-Una vez arregladas algunas columnas, la columna de 'Hora' se ha separado en 'Fecha' y 'Hora'.
-En cuanto a los tipos de datos, la fecha es Date y hora hms. El resto de ellas se mantienen como de tipo carácter.
+Antes de ser tratadas, todas la variables aparecen como categóricas de tipo carácter. Una vez arregladas algunas columnas, la columna de 'Hora' se ha separado en 'Fecha' y 'Hora'.
+En cuanto a los tipos de datos, la fecha es Date y hora hms. El resto de ellas mantienen el tipo inicial.
 
-# Pregunta 1: Hora pico de acceso y día con mayor actividad
 
-```{r fig1, echo=FALSE, fig.cap="Eventos por hora del día.\\label{fig:fig1}", fig.height=4, fig.width=4, fig.pos = 'H'}
+# Conexiones según horario
+## Hora pico de acceso
+
+```{r fig1, echo=FALSE, fig.cap="Eventos por hora del día.\\label{fig:fig1}", fig.height=3, fig.pos='H', fig.width=3}
 horaPico + labs(title = "")
 ```
 
+\FloatBarrier
 Para responder a esta cuestión se partió de la variable temporal del dataset, que previamente fue transformada para separar correctamente la fecha y la hora de cada registro.
 
-A partir de la hora de cada evento, se agruparon los registros por franjas horarias y se contabilizó el número de accesos producidos en cada una de ellas. Este análisis permitió identificar la hora con mayor volumen de actividad (hora pico), que resultó ser las 9:00 horas, coincidiendo con el horario habitual de inicio de las clases.
+A partir de la hora de cada evento, se agruparon los registros por franjas horarias y se contabilizó el número de accesos producidos en cada una de ellas. Este análisis permitió identificar la hora con mayor volumen de actividad, que resultó ser las 9:00, coincidiendo con el horario habitual de inicio de las clases.
 
-```{r fig2, echo=FALSE, fig.cap="Eventos por día de la semana.\\label{fig:fig2}", fig.height=4, fig.width=4, fig.pos = 'H'}
-eventosdia + labs(title = "")
+## Día con mayor actividad
+
+```{r fig2, echo=FALSE, fig.cap="Eventos por día de la semana.\\label{fig:fig2}", fig.height=3, fig.pos='H', fig.width=3}
+eventosdia + labs(title = "") + theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
 ```
 
-Del mismo modo, a partir de la variable fecha, se extrajo el día de la semana correspondiente a cada evento y se agruparon los registros según dicho criterio. Los resultados muestran que el miércoles es el día con mayor actividad registrada dentro de la plataforma.
+\FloatBarrier
+Del mismo modo, a partir de la variable fecha, se extrajo el día de la semana correspondiente a cada evento y se agruparon los registros según dicho criterio. Los resultados muestran que el miércoles es el día con mayor actividad dentro de la plataforma.
 
-Para representar los resultados se utilizaron gráficos de barras, ya que permiten visualizar de forma clara la distribución temporal de los eventos y facilitan la comparación entre franjas horarias y días de la semana. 
 
+## Hora con más asistencias
 
-## Pregunta 1.1: Hora con mas asistencias registradas
-
-```{r fig3, echo=FALSE, fig.cap="Distribución de asistencia por hora .\\label{fig:fig1}", fig.height=4, fig.width=4, fig.pos = 'H'}
+```{r fig3, echo=FALSE, fig.cap="Distribución de asistencia por hora .\\label{fig:fig3}", fig.height=3, fig.pos='H', fig.width=3}
 Asistencia+ labs(title="")
 ```
 
-con el objetivo de estudiar el comportamiento de los registros de asistencia en la plataforma, se filtraron únicamente aquellos eventos pertenecientes al componente “Asistencia”. Posteriormente, se seleccionaron los eventos relacionados con acciones de control de asistencia mediante un filtrado sobre el nombre del evento.
-
-Una vez obtenidos los registros relevantes, se representó la distribución temporal de las asistencias utilizando un histograma agrupado por intervalos de tiempo. Este tipo de representación permite visualizar las franjas horarias en las que se concentra un mayor número de registros de asistencia.
-
-Los resultados muestran que la hora con mayor número de asistencias registradas se produce alrededor de las 9:10 horas, lo que coincide con el inicio habitual de las clases presenciales. Esto sugiere que gran parte de las asistencias son registradas al comienzo de la jornada lectiva.
-
-Para la representación gráfica se utilizó un histograma, ya que permite observar de forma clara la frecuencia de registros de asistencia a lo largo del tiempo.
+\FloatBarrier
+Por otro lado, pero siguiendo la misma línea, se ha representado la asistencia según el horario en que se ha registrado Los resultados muestran que la hora con mayor número de asistencias  se produce alrededor de las 9:10 horas, lo que coincide con el inicio habitual de las clases. Esto sugiere que gran parte de las asistencias son registradas al comienzo de la jornada lectiva.
 
 
-# Pregunta 2: Número total de eventos registrados
-
-Para esta parte del análisis se consideró que cada fila del dataset representa un evento o acción registrada en Moodle.
-
-A partir de ello, se obtuvo el número total de eventos presentes en el conjunto de datos mediante el recuento de observaciones, resultando un total de 109.746 eventos registrados.
-
-Este valor permite hacerse una idea del volumen de actividad generado en la plataforma y confirma que el conjunto de datos dispone de un tamaño suficientemente amplio para realizar análisis estadísticos y detectar patrones de comportamiento.
-
-# Pregunta 3: Usuarios distintos y usuarios con mayor actividad
-```{r fig4, echo=FALSE, fig.cap="Top 3 usuarios con más actividad.\\label{fig:fig4}", fig.height=4, fig.width=4, fig.pos = 'H'}
+# Actividad por los usuarios
+```{r fig4, echo=FALSE, fig.cap="Top 3 usuarios con más actividad.\\label{fig:fig4}", fig.height=3, fig.pos='H', fig.width=3}
 Top3 + labs(title="")
 ```
 
+\FloatBarrier
+En esta parte del análisis se ha estudiado cuántos usuarios distintos aparecen, obteniendo así un valor de 87. Posteriormente, se ha realizado un recuento de eventos por usuario con el objetivo de observar diferencias en los niveles de actividad y detectar qué usuarios concentraban un mayor número de registros. En la figura (\ref{fig:fig4}) aparecen los tres usuarios con más eventos. A partir del cuarto usuario, se registra prácticamente la misma cantidad de actividad.
 
-En esta parte del análisis se estudió cuántos usuarios distintos aparecen en el conjunto de datos utilizando la variable correspondiente al identificador de usuario.
+# Actividad en horario atípico
+A partir de ver las horas de asistencia, surge preguntarse si el aula virtual se usa en horarios atípicos, entiendo estos como las horas de 00:00 a 06:00.
 
-En primer lugar, se calculó el número de usuarios únicos presentes en el dataset. Posteriormente, se realizó un recuento de eventos por usuario con el objetivo de observar diferencias en los niveles de actividad y detectar qué usuarios concentraban un mayor número de registros.
-
-Como apoyo al análisis, se incluyó una representación gráfica con los tres usuarios más activos, lo que permite visualizar de manera más clara las diferencias de participación dentro de la plataforma.
-Hemos puesto solo top3, porque apartir del Top 3 todos los alumnos registraban mas o menos la misma actividad por lo que es irrelevante mostrar mas de 3
-
-# Pregunta 4: ¿Cómo ha evolucionado la actividad a lo largo de los meses?
-
-```{r fig5, echo=FALSE, fig.cap="Top 3 usuarios con más actividad.\\label{fig:fig5}", fig.height=4, fig.width=4, fig.pos = 'H'}
-plot_4
-```
-
-Para analizar la evolución a lo larga de los meses, he utilizado la columna Fecha.
-En primer lugar, extraje el número de cada mes y los convertí en categorías mediante as.factor().
-Para que después, al representar la gráfica poder ver una barra para cada mes y no hubiera valores decimales.
-
-En el gráfico vemos una distribución anómala, ya que de agosto a diciembre los registros son prácticamente cero.
-La actividad real comienza en enero y alcanza su pico en febrero con más de 25.000 eventos.
-Estos resultados indican que en el dataset utilizado, el periodo de mayor carga académica (exámenes y entregas) es en el primer semestre del año (de enero a junio).
-
-# Pregunta 5: ¿Hay actividad registrada en horarios atípicos (madrugada, festivos)?
 ```{r echo=FALSE}
+sum(conteo_horas$n)/nrow(data)
+
+colnames(conteo_horas) <- c("Hora", "Frec")
+
 knitr::kable(conteo_horas, 
              caption = "Frecuencia de horas atípicas", 
              booktabs = TRUE)
 ```
 
-Para comprobar si el aula virtual se usa en horarios atípicos, usé la columna Hora.
-Utilicé la función mutate() para obtener el valor numérico de cada hora de registro y usé filter() para seleccionar las interacciones hechas en la madrugada (de 00:00 a 06:00).
-Por último, obtuve el número total de eventos por cada hora con la función count().
+El análisis confirma que no es en este horario en el que los usuarios son especialmente activos. Ya que las cifras representa únicamente un 3% del total. Pese a esto, se detectan registros en todas las horas analizadas.
 
-El análisis confirma que existe una actividad constante durante la madrugada. Aunque el volumen de interacciones es significativamente menor que durante las horas punta de la mañana (como las 9:00), se detectan registros en todas las horas analizadas. Esto demuestra que el aula virtual ofrece la flexibilidad necesaria para que los estudiantes adapten su ritmo de estudio y realicen consultas o entregas en horarios nocturnos según su disponibilidad personal.
+# Evolución de la actividad
 
-# Pregunta 6: ¿Predomina la consulta de recursos o la interacción activa?
+```{r fig5, echo=FALSE, fig.cap="Registros por meses..\\label{fig:fig5}", fig.height=3, fig.pos='H', fig.width=3}
+plot_4+ labs(title="")
+```
 
-```{r fig6, echo=FALSE, fig.cap="Top 3 usuarios con más actividad.\\label{fig:fig6}", fig.height=4, fig.width=4, fig.pos = 'H'}
+\FloatBarrier
+Para analizar la evolución a lo larga de los meses, se ha utilizado la columna Fecha, extrayendo el número de cada mes y convirtiéndolos en categorías para que al representar la gráfica poder ver una barra para cada mes.
+
+En el gráfico (\ref{fig:fig5}) se ve en primera instancia una distribución anómala, ya que de agosto a diciembre los registros son prácticamente nulos. La actividad real comienza en enero y alcanza su pico en febrero con más de 25.000 eventos. Esto coincide con el inicio del cuatrimestre. Siendo que los valores bajos, se sitúan en aquellos períodos en los que no se imparte la asignatura. 
+
+
+# Acciones más comunes.
+
+En cuanto a las acciones de los usuarios, es interesante conocer si se tiene una actitud activa o pasiva en el aula virtual. Para conocer esto se ha etiquetado como "Consulta de recursos" los eventos que aparecen relacionados con "ver" y los demás como "Interacción activa". Los resultados muestran que hay más interacción activa que consulta de recursos. Para ejemplificarlo supóngase para acceder a una tarea hay que entrar al curso, seleccionarla y después enviarla. Los porcentajes quedan tal que 66% para consulta y 33% para interacción. Entendiéndose de esta forma, se puede dejar por claro que la plataforma no solo se usa para leer contenido sino que genera un conjunto de pequeñas acciones dinámicas.
+
+```{r fig6, echo=FALSE, fig.cap="Top 3 usuarios con más actividad.\\label{fig:fig6}", fig.height=3, fig.pos='H', fig.width=3}
 plot_6
 ```
+\FloatBarrier
 
-Para este análisis, he clasificado los registros en dos categorías. He etiquetado como "Consulta de recursos" los eventos base de visualización ("Módulo de curso visto" y "Curso visto") y como "Interacción activa" el resto de la actividad registrada. Para ello, he utilizado la función mutate() con ifelse() y he generado un resumen de totales con summarise() para después generar la gráfica.
-
-Los resultados muestran que, sorprendentemente, hay más interacción activa que consulta de recursos.
-Pero después de analizarlo bien, me he dado cuenta que es porque el sistema Moodle registra como interacción activa cualquier clic que no sea ver el curso, por lo que predomina la interacción activa sobre la consulta de recursos. 
-Por tanto, la plataforma no solo se usa para leer contenidos sino que genera un conjunto de pequeñas acciones dinámicas de los alumnos.
-
-# Pregunta 7: Media de entrada por usuario.
-
-```{r fig7, echo=FALSE, fig.cap="Comparación entre días totales y únicamente los de acceso.\\label{fig:fig7}", fig.height=4, fig.width=4, fig.pos = 'H'}
-grafico_ej_7_1 + grafico_ej_7_2
-```
-
-Viendo el gráfico \ref{fig:fig2} se puede observar que la mayoría de los alumnos se han conectado la mitad de los días que han tenido acceso (entendiendo esto como los días desde el primer acceso hasta el último). Además se puede ver que en ambos casos el usuario con más accesos es también el que más días ha tenido acceso. Pese a esto, contabilizando únicamente los días que realmente ha accedido a la página, se puede ver que ha accedido más o menos la misma cantidad de días que la media de los usuarios pero ha realizado muchas más acciones. Además, se observa que los usuarios que más días han accedido al aula virtual, son también los que más acciones han realizado.
-
-```{r fig8, echo=FALSE, fig.cap="Comparación de usuarios por cantidad de accesos.\\label{fig:fig8}", fig.height=4, fig.width=4, fig.pos = 'H'}
-grafico_ej_7_3
-```
-
-En esta otra figura ( \ref{fig:fig3}) se observa que la mayoría de las personas se han conectado entre 1000y 1200 veces.
-
-
-# Pregunta 8: ¿Cuántos intentos de cuestionario hace de media cada estudiante?
-
-```{r fig9, echo=FALSE, fig.cap='Intentos_cuestionario/Usuario\\label{fig:fig9}', fig.height=4, fig.width=4, fig.pos = 'H'}
-grafico_ej_8_1
-```
-
-La figura \ref(fig:4) pretende mostrar la relación entre la cantidad de intentos realizados y los usuarios. De esta forma se observa que la mayoría ha realizado al menos un intento por cuestionario (pese a que no se puede estar completamente seguros de que hayan realizado todos los cuestionarios). Además, hay algunos usuarios que viendo este gráfico se sabe que habrá mínimo uno que no habrán realizado, estos son los que están por debajo de la línea punteada.
-
-```{r fig10, echo=FALSE, fig.cap="Intentos por cuestionario.\\label{fig:fig10}", fig.height=4, fig.width=4, fig.pos = 'H'}
-grafico_ej_8_2
-```
-
-Por otro lado, de esta otra figura (\ref{fig:fig5}) se puede extraer información más interesante. Siendo que se encuentran en orden cronológico de apertura, destacan sobre los demás el cuestionario global de la asignatura y en menor medida, el de recordamos R. Se puede entender que el global haya sido realizado más veces. Pese a no tener información exacta de ese cuestionario, asumiendo que fuera igual al que tenemos disponible nosotros en el aula virtual, se trata de un cuestionario que recoge cuestiones posibles del examen. Además, realizándolo, se repasa el temario y al quedarse la nota más alta obtenida, los alumnos pueden realizarlo cuantas veces quieran. Este cuestionario tiene treinta preguntas a realizar en una hora y media.
-
-Por otro lado, en cuanto al cuestionario recordamos r, la razón por la que entendemos que tanta gente lo ha realizado es porque era el primero. Además, este se realizaba en el aula, por lo que es prácticamente seguro que todos los alumnos lo habrán realizado al menos una vez.
-
-
-
-# Pregunta 9: ¿Qué tipo de acciones son las más comunes?
-
-```{r echo=FALSE}
+Ahora que se ha visto la comparación, interesa saber cuáles son las acciones más comunes. En la tabla \ref(tab:t_ej_9) se observan las diez acciones que más se han realizado. Es sorprendente que sea la calificación de los usuarios la tercera acción más realizada. Esto podría justificar en parte que el usuario U0072 sea el que más acciones tiene. Por otro lado, el evento más frecuente es "Módulo de curso visto", con más de 22.000 registros, seguido de "Curso visto" con alrededor de 20.000, siendo que ambos eventos destacan sobre el resto. Confirmando aún más la predominancia de la visualización frente a la interacción.
+```{r t_ej_9, echo=FALSE}
 knitr::kable(tabla_ej_9, 
              caption = "Conteo de acciones realizadas", 
              booktabs = TRUE)
 ```
 
-En esta tabla se observan las diez acciones que más se han realizado. Es sorprendente que sea la calificación de los usuarios la tercera acción más realizada. Esto podría justificar en parte que el usuario U0072 sea el que más acciones tiene.
 
-# Pregunta 10: ¿Desde cuántas IPs distintas se conecta un mismo usuario? ¿Hay alguna ilógica?
+# Media de entrada por usuario.
 
-```{r fig11, echo=FALSE, fig.cap='Numero de IPs por Usuario\\label{fig:fig11}', fig.height=4, fig.width=4, fig.pos = 'H'}
+```{r fig7, echo=FALSE, fig.cap="Comparación entre días totales y únicamente los de acceso.\\label{fig:fig7}", fig.height=3, fig.width=3, fig.pos = 'H'}
+grafico_ej_7_1 + grafico_ej_7_2
+```
+
+\FloatBarrier
+Viendo el gráfico \ref{fig:fig2} se puede observar que la mayoría de los alumnos se han conectado la mitad de los días que han tenido acceso (entendiendo esto como los días desde el primer acceso hasta el último). Además se puede ver que en ambos casos el usuario con más accesos es también el que más días ha tenido acceso. Pese a esto, contabilizando únicamente los días que realmente ha accedido a la página, se puede ver que ha accedido más o menos la misma cantidad de días que la media de los usuarios pero ha realizado muchas más acciones. Además, se observa que los usuarios que más días han accedido al aula virtual, son también los que más acciones han realizado, esto lleva a calcular la correlación de Pearson, obteniendo un coeficiente de 0.79, por lo que efectivamente se confirma que están relacionadas ambas variables.
+
+```{r fig8, echo=FALSE, fig.cap="Comparación de usuarios por cantidad de accesos.\\label{fig:fig8}", fig.height=3, fig.width=3, fig.pos = 'H'}
+grafico_ej_7_3
+```
+
+\FloatBarrier
+En esta otra figura ( \ref{fig:fig3}) se observa que la mayoría de las personas se han conectado entre 1000y 1200 veces.
+
+
+# Cuestionarios y tareas realizados
+
+```{r fig9, echo=FALSE, fig.cap='Intentos_cuestionario/Usuario\\label{fig:fig9}', fig.height=3, fig.width=3, fig.pos = 'H'}
+grafico_ej_8_1
+```
+
+\FloatBarrier
+La figura \ref(fig:9) pretende mostrar la relación entre la cantidad de intentos realizados y los usuarios. De esta forma se observa que la mayoría ha realizado al menos un intento por cuestionario. Además, hay algunos usuarios que mínimo no han realizado un cuestionario, estos son los que están por debajo de la línea punteada.
+
+```{r fig10, echo=FALSE, fig.cap="Intentos por cuestionario.\\label{fig:fig10}", fig.height=3, fig.width=3, fig.pos = 'H'}
+grafico_ej_8_2
+```
+
+\FloatBarrier
+Por otro lado, de esta otra figura (\ref{fig:fig5}) se puede extraer información más interesante. Siendo que se encuentran en orden cronológico de apertura, destacan sobre los demás el cuestionario global de la asignatura y en menor medida, el de recordamos R. Se puede entender que el global haya sido realizado más veces. Pese a no tener información exacta de ese cuestionario, asumiendo que fuera igual al que tenemos disponible nosotros en el aula virtual, se trata de un cuestionario que recoge cuestiones posibles del examen. Además, realizándolo, se repasa el temario y al quedarse la nota más alta obtenida, los alumnos pueden realizarlo cuantas veces quieran. Este cuestionario tiene treinta preguntas a realizar en una hora y media.
+
+Por otro lado, en cuanto al cuestionario "Recordamos R", la razón por la que entendemos que tanta gente lo ha realizado es porque era el primero y se realizaba en el aula, por lo que no podía "quedar olvidado".
+
+Se continúa con la interacción con cada tarea del curso. Para ello se filtraron los eventos del componente "Tarea", se agruparon por contexto del evento y se contó el número de usuarios únicos en cada uno.
+
+```{r echo=FALSE}
+data_14 <- data_14 %>% mutate(`Contexto del evento` = str_remove_all(`Contexto del evento`, 'Tarea: '))
+colnames(data_14) <- c("Tarea", "Usuarios")
+knitr::kable(data_14, 
+             caption = "Tareas con más entregas (por usuarios distintos)", 
+             booktabs = TRUE)
+```
+
+Las más visitadas son "Práctica 1: Importación - Tarea" con 75 usuarios y "Práctica 2. Visualización" y "Práctica 4. Entrega de ejercicios" con 74 usuarios cada una. De estos resultados, podemos deducir que el sistema no es el mismo que el actual ya que las prácticas no se deben entregar este año, por lo que no tendría sentido que una cantidad de alumnos tan grande la entregara siendo que no aporta absolutamente nada. Por otro lado, si se piensa que su entrega es obligatoria, el valor toma sentido.
+
+En el extremo opuesto aparecen entradas identificadas como "assign (id ...) borrado", con únicamente un usuario distinto. Estas corresponden a tareas que han sido eliminadas de la plataforma y de las que solo queda un registro residual en los logs.
+En general se observa que las tareas evaluables y obligatorias concentran la mayor participación, mientras que tareas opcionales o eliminadas tienen una presencia mucho menor.
+
+# Interacciones entre usuarios
+Para esta parte del análisis se ha estudiado la proporción de los eventos que implican una interacción sobre otro usuario, es decir, tienen un valor en la columna "Usuario afectado", y cuántos no.
+
+```{r fig11, echo=FALSE, fig.cap='Comparación de eventos según si tiene usuario afectado\\label{fig:fig11}', fig.height=3, fig.width=3, fig.pos = 'H'}
+data_15_grafico + labs(title="")
+```
+
+\FloatBarrier
+Los resultados muestran que 69.346 eventos, un 63.2% del total, no tienen usuario afectado, mientras que las interacciones entre usuarios, aunque presentes, representan poco más de un tercio del total de la actividad. Esto indica que la mayoría de las acciones registradas son individuales, es decir, el usuario actúa sobre la plataforma sin que ello repercuta directamente sobre otro usuario.
+
+Ahora bien, respecto de aquellas interacciones que sí implican otro usuario, ¿cuáles no afectan sobre uno mismo? Descartamos aquellas interacciones en las que el usuario que la realiza es el mismo que la que la recibe porque estas suelen tener que ver con revisar calificaciones. Para esto se han filtrado los eventos donde el Usuario afectado no es NA y además es distinto del que realiza la acción.
+
+```{r fig12, echo=FALSE, fig.cap='Interacciones generadas según componente\\label{fig:fig12}', fig.height=3, fig.width=3, fig.pos = 'H'}
+data_16_grafico + labs(title="")
+```
+
+\FloatBarrier
+Los resultados muestran que únicamente 6 componentes generan este tipo de interacciones. El componente "Sistema" es con diferencia el más destacado, con 14.013 interacciones, seguido de "Tarea" con 1.453. El resto de componentes tienen una presencia muy inferior. Esto indica que la mayor parte de las interacciones entre usuarios probablemente están relacionadas con acciones administrativas del profesor sobre los alumnos.
+
+
+# IPs de acceso
+En cuanto a las IPs, se puede observar en la figura \ref(fig:fig11) que hay usuarios que se conectan con un numero muy bajo de IPs y por eso no se aprecian correctamente. En el otro extremo hay algunos que se conectan con mas de 100 diferentes, esto puede ser debido al uso de redes moviles, VPN u otros factores externos.
+
+```{r fig13, echo=FALSE, fig.cap='Numero de IPs por Usuario\\label{fig:fig13}', fig.height=3, fig.width=3, fig.pos = 'H'}
 g_10 + scale_x_discrete(label = NULL) + theme(axis.ticks = element_blank())
 ```
 
-Como podemos visualizar en la figura \ref(fig:fig10) tenemos unos cuantos usuarios que se conectan con un numero muy najo de IPs y por eso no podemos llegar a verlos, pero hay otros que se llegan a conectar con mas de 100 IPs, esto puede ser debido al uso de redes moviles, VPN u otros factores externos.
+\FloatBarrier
+En el caso de este conjunto de datos, se aprecia un outlier que cuenta con mas de 1000 IPs diferentes, esto puede debserse a un uso frecuente de VPN o redes moviles que generan una Ip diferente para cada conexion.
 
-En el caso de este conjunto de datos, tenemos un outlier que cuenta con mas de 1000 IPs diferentes, podriamos pensar que este usuario usa de manera muy frecuente VPN o redes moviles que generan una Ip diferente para cada conexion.
 
+Por otro lado, en la tabla \ref(tab:t_11), la gran mayoria de las IPs tienen únicamente un usuario que la haya utilizado, esto se debe al poco uso de ordenadores alojados en la universidad ya que los alumnos suelen acceder desde sus propios dispositivos. Por ello, resulta interesante ver que una IP ha sido utilizada por 4 personas, es posiblemente, como se mencionaba, un ordenador de la universidad.
 
-# Pregunta 11: ¿Existen IPs compartidas por muchos usuarios?
 ```{r t_11, echo=FALSE}
+colnames(t_11) <- c("Coincidencia de IPs", "Usuarios")
 knitr::kable(t_11, 
              caption = "Frecuencia de IP según cantidad de usuarios", 
              booktabs = TRUE)
 ```
 
-Como podemos ver en la tabla \ref(tab:t_11), la gran mayoria de las IPs tienen pocos usuarios que las hayan utilizado, esto se debe al poco uso de ordenadores alojados en la universidad, ademas de que comunmente no se les olvidan a los alumnos el portatil o el dispositivo donde acceden al aula virtual.
-
-A parte, podemos ver como una IP si que es utilizada por 4 personas, esta es posible que sea una IP de un ordenador de la universidad.
 
 
 
-# Pregunta 12: ¿Qué porcentaje de usuarios accede desde redes móviles y cuántos desde redes fijas?
 
-```{r fig12, echo=FALSE, fig.cap='Accesos mediante red movil o fija\\label{fig:fig12}', fig.height=3, fig.pos='H', fig.width=3}
+# ¿Acceso desde redes móviles o fijas?
+Para responder a esta pregunta, se ha clasificado el tipo de acceso en dos grupos según el origen de la conexión. Se han considerado accesos IPv4 a las realizadas mediante una red fija y IPv6 a los accesos de red móvil.
+
+Se ha considerado de esta manera ya que la IPv4 se usan desde hace más tiempo y son las usadas principalmente por ordenadores y redes fijas, mientras que la IPv6 es más nueva y usada principalmente en redes 4G y 5G, lo que da lugar a redes móviles.
+
+Se observa la diferencia de su uso en la figura \ref(fig:f_12), obteniendo que un 52.4% utiliza redes fijas, mientras que un 47.6% acceden mediante redes móviles, las cuales generan una IP cada vez que se conecta si lo hace en un período de tiempo no muy cercano.
+```{r fig14, echo=FALSE, fig.cap='Accesos mediante red movil o fija\\label{fig:fig14}', fig.height=3, fig.pos='H', fig.width=3}
 g_12
 ```
 
-Para responder a esta pregunta, se ha clasificado el tipo de acceso en dos grupos (IPv4 e IPv6) según el origen de la conexión. Se han considerado accesos mediante una red fija a las IPv4 y accesos de red móvil a las IPv6.
-
-Lo consideramos asi ya que las IPv4 se usan desde hace mas tiempo y son las usadas principalmente por ordenadores y redes fijas y la IPv6, es mas nueva y usada principalmente en redes 5G o 4G que dan lugar a redes moviles.
-
-Por ello hemos clasificado las diferentes IPs segun su tipo (representacion en la figura \ref(fig:f_12)) y hemos obtenido que el 52.4488 utilizan redes fijas, normalmente de un ordenador y el resto, es decir, un 47.5512 acceden mediante redes moviles, que generan una IP cada vez que se conectan, si lo hacen en un periodo de tiempo no muy cercano.
-
-
-# Pregunta 13:  ¿Cuáles son los 10 eventos más frecuentes en el dataset?
-```{r fig13, echo=FALSE, fig.cap='Top 10 eventos más frecuentes\\label{fig:fig13}', fig.height=4, fig.width=5, fig.pos = 'H'}
-data_13_grafico + labs(title="")
-```
-Para esta parte del análisis se identificaron los 10 eventos más frecuentes registrados en el dataset. Para ello se contabilizó el número de ocurrencias de cada tipo de evento y se ordenaron de mayor a menor frecuencia.
-El evento más frecuente es "Módulo de curso visto", con más de 22.000 registros, seguido de "Curso visto" con alrededor de 20.000. Ambos eventos destacan claramente sobre el resto, lo que indica que la actividad predominante en la plataforma es la consulta y visualización de contenidos.
-
-Esto refleja que los usuarios de la plataforma tienen un comportamiento predominantemente consultivo, accediendo y visualizando contenidos con mucha más frecuencia de la que interactúan activamente
-
-
-# Pregunta 14: ¿Cuales son las tareas con mas interacciones de usuarios del curso?
-```{r echo=FALSE}
-data_14 <- data_14 %>% mutate(`Contexto del evento` = str_remove_all(`Contexto del evento`, 'Tarea: '))
-knitr::kable(data_14, 
-             caption = "Tareas con más entregas (por usuarios distintos)", 
-             booktabs = TRUE)
-```
-Para esta parte del análisis se estudió cuántos usuarios distintos han interactuado con cada tarea del curso. Para ello se filtraron los eventos del componente "Tarea", se agruparon por contexto del evento y se contó el número de usuarios únicos en cada uno.
-
-Los resultados muestran diferencias notables entre las tareas. Las más visitadas son "Práctica 1: Importación - Tarea" con 75 usuarios distintos y "Práctica 2. Visualización" y "Práctica 4. Entrega de ejercicios" con 74 usuarios cada una. Estas tareas, al ser prácticas obligatorias del curso, concentran la participación de prácticamente todos los alumnos.
-
-En el extremo opuesto aparecen entradas identificadas como "assign (id ...) borrado", con únicamente 1 usuario distinto. Estas corresponden a tareas que han sido eliminadas de la plataforma y de las que solo queda un registro residual en los logs.
-En general se observa que las tareas evaluables y obligatorias concentran la mayor participación, mientras que tareas opcionales o eliminadas tienen una presencia mucho menor.
-
-# Pregunta 15: ¿Cuantos eventos tienen usuario afectado y cuántos no?
-
-```{r fig14, echo=FALSE, fig.cap='Comparación de eventos según si tiene usuario afectado\\label{fig:fig14}', fig.height=4, fig.width=4, fig.pos = 'H'}
-data_15_grafico + labs(title="")
-```
-
-Para esta parte del análisis se estudió qué proporción de los eventos registrados en el dataset implican una interacción sobre otro usuario, es decir, tienen un valor en la columna Usuario afectado, y cuántos no.
-
-Para ello se clasificó cada evento en dos categorías: "Con usuario afectado" cuando la columna no era NA, y "Sin usuario afectado" cuando sí lo era. A continuación se calculó el porcentaje de cada grupo sobre el total de eventos.
-
-Los resultados muestran que 69.346 eventos, un 63.2% del total, no tienen usuario afectado, mientras que 40.400 eventos, el 36.8% restante, sí lo tienen. Esto indica que la mayoría de las acciones registradas en Moodle son individuales, es decir, el usuario actúa sobre la plataforma sin que ello repercuta directamente sobre otro usuario. Las interacciones entre usuarios, aunque presentes, representan poco más de un tercio del total de la actividad.
-
-# Pregunta 16: ¿Qué componentes generan más interacciones entre usuarios (usuario afectado distinto del usuario que realiza la acción)?
-
-```{r fig15, echo=FALSE, fig.cap='Interacciones generadas según componente\\label{fig:fig15}', fig.height=4, fig.width=4, fig.pos = 'H'}
-data_16_grafico + labs(title="")
-```
-
-En esta pregunta se busca averiguar cuales son los componentes que generan mas interacciones entre usuarios distintos. Es decir, situaciones en las que el usuario que realiza la acción es diferente al usuario afectado. Para ello se filtraron los eventos donde Usuario afectado no era NA y además era distinto del usuario que realizaba la acción, agrupamos por componente y por ultimo contamos el numero de interacciones de cada uno.
-
-Los resultados muestran que únicamente 6 componentes generan este tipo de interacciones. El componente "Sistema" es con diferencia el más destacado, con 14.013 interacciones entre usuarios distintos, seguido de "Tarea" con 1.453. El resto de componentes, "Cuestionario" con 175, "Usuario" con 37, "Registros" con 3 y "Foro" con 1, tienen una presencia muy inferior.
-
-Esto indica que la mayor parte de las interacciones entre usuarios en la plataforma se producen a través del Sistema, probablemente relacionadas con acciones administrativas del profesor sobre los alumnos.
+\FloatBarrier
