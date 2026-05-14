@@ -201,7 +201,7 @@ Top3<-ggplot(usuarios_top, aes(x = reorder(Usuario, n), y = n)) +
 data_mensual <- data %>% mutate(Mes_Num = as.factor(month(Fecha))) %>%
   group_by(Mes_Num) %>% summarise(n = n())
 
-ggplot(data_mensual, aes(x = Mes_Num, y = n)) + geom_col(fill = "steelblue") +
+plot_4 <- ggplot(data_mensual, aes(x = Mes_Num, y = n)) + geom_col(fill = "steelblue") +
   labs(title = "Evolución de la actividad por meses", x = "Meses", y = "Total de registros") +
   theme_minimal()
 ```
@@ -212,7 +212,6 @@ ggplot(data_mensual, aes(x = Mes_Num, y = n)) + geom_col(fill = "steelblue") +
 actividad_madrugada <- data %>% mutate(solo_hora = hour(Hora)) %>% filter(solo_hora >= 0 & solo_hora <= 6)
 
 conteo_horas <- actividad_madrugada %>% count(solo_hora)
-conteo_horas
 ```
 
 ```{r Pregunta 6, echo=FALSE}
@@ -229,7 +228,7 @@ resumen_tipo <- data_tipo %>%
   group_by(Categoria) %>% 
   summarise(Total = n())
 
-ggplot(resumen_tipo, aes(x = Categoria, y = Total, fill = Categoria)) +
+plot_6 <- ggplot(resumen_tipo, aes(x = Categoria, y = Total, fill = Categoria)) +
   geom_col() + 
   labs(title = "Comparativa Real: Consulta vs Interacción", 
        x = "Tipo de actividad", 
@@ -304,7 +303,8 @@ d_8_2 <- d_8_1 %>%
   summarize(Intentos = n())
 d_8_2 <- d_8_2 %>% mutate(`Contexto del evento` = str_remove_all(`Contexto del evento`, '[Cc]uestionario|:| +'))
 d_8_2 <- d_8_2[c(12, 2, 11, 3, 8, 4, 9, 5, 6, 10, 7, 1), ]
-grafico_ej_8_2 <- ggplot(d_8_2, aes(x=str_remove(`Contexto del evento`, 'Cuestionario: '), y=Intentos)) + geom_point() + theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) + labs(x = "Cuestionario")
+d_8_2$`Contexto del evento` <- factor(d_8_2$`Contexto del evento`, levels = d_8_2$`Contexto del evento`)
+grafico_ej_8_2 <- ggplot(d_8_2, aes(x=`Contexto del evento`, y=Intentos)) + geom_point() + theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) + labs(x = "Cuestionario")
 
 #Cantidad de cuestionarios abandonados.
 d_8_3 <- d_8 %>% filter(`Nombre evento` == 'Intento abandonado')
@@ -497,6 +497,10 @@ Hemos puesto solo top3, porque apartir del Top 3 todos los alumnos registraban m
 
 # Pregunta 4: ¿Cómo ha evolucionado la actividad a lo largo de los meses?
 
+```{r fig5, echo=FALSE, fig.cap="Top 3 usuarios con más actividad.\\label{fig:fig5}", fig.height=4, fig.width=4, fig.pos = 'H'}
+plot_4
+```
+
 Para analizar la evolución a lo larga de los meses, he utilizado la columna Fecha.
 En primer lugar, extraje el número de cada mes y los convertí en categorías mediante as.factor().
 Para que después, al representar la gráfica poder ver una barra para cada mes y no hubiera valores decimales.
@@ -506,6 +510,11 @@ La actividad real comienza en enero y alcanza su pico en febrero con más de 25.
 Estos resultados indican que en el dataset utilizado, el periodo de mayor carga académica (exámenes y entregas) es en el primer semestre del año (de enero a junio).
 
 # Pregunta 5: ¿Hay actividad registrada en horarios atípicos (madrugada, festivos)?
+```{r echo=FALSE}
+knitr::kable(conteo_horas, 
+             caption = "Frecuencia de horas atípicas", 
+             booktabs = TRUE)
+```
 
 Para comprobar si el aula virtual se usa en horarios atípicos, usé la columna Hora.
 Utilicé la función mutate() para obtener el valor numérico de cada hora de registro y usé filter() para seleccionar las interacciones hechas en la madrugada (de 00:00 a 06:00).
@@ -515,6 +524,10 @@ El análisis confirma que existe una actividad constante durante la madrugada. A
 
 # Pregunta 6: ¿Predomina la consulta de recursos o la interacción activa?
 
+```{r fig6, echo=FALSE, fig.cap="Top 3 usuarios con más actividad.\\label{fig:fig6}", fig.height=4, fig.width=4, fig.pos = 'H'}
+plot_6
+```
+
 Para este análisis, he clasificado los registros en dos categorías. He etiquetado como "Consulta de recursos" los eventos base de visualización ("Módulo de curso visto" y "Curso visto") y como "Interacción activa" el resto de la actividad registrada. Para ello, he utilizado la función mutate() con ifelse() y he generado un resumen de totales con summarise() para después generar la gráfica.
 
 Los resultados muestran que, sorprendentemente, hay más interacción activa que consulta de recursos.
@@ -523,13 +536,13 @@ Por tanto, la plataforma no solo se usa para leer contenidos sino que genera un 
 
 # Pregunta 7: Media de entrada por usuario.
 
-```{r fig5, echo=FALSE, fig.cap="Comparación entre días totales y únicamente los de acceso.\\label{fig:fig5}", fig.height=4, fig.width=4, fig.pos = 'H'}
+```{r fig7, echo=FALSE, fig.cap="Comparación entre días totales y únicamente los de acceso.\\label{fig:fig7}", fig.height=4, fig.width=4, fig.pos = 'H'}
 grafico_ej_7_1 + grafico_ej_7_2
 ```
 
 Viendo el gráfico \ref{fig:fig2} se puede observar que la mayoría de los alumnos se han conectado la mitad de los días que han tenido acceso (entendiendo esto como los días desde el primer acceso hasta el último). Además se puede ver que en ambos casos el usuario con más accesos es también el que más días ha tenido acceso. Pese a esto, contabilizando únicamente los días que realmente ha accedido a la página, se puede ver que ha accedido más o menos la misma cantidad de días que la media de los usuarios pero ha realizado muchas más acciones. Además, se observa que los usuarios que más días han accedido al aula virtual, son también los que más acciones han realizado.
 
-```{r fig6, echo=FALSE, fig.cap="Comparación de usuarios por cantidad de accesos.\\label{fig:fig6}", fig.height=4, fig.width=4, fig.pos = 'H'}
+```{r fig8, echo=FALSE, fig.cap="Comparación de usuarios por cantidad de accesos.\\label{fig:fig8}", fig.height=4, fig.width=4, fig.pos = 'H'}
 grafico_ej_7_3
 ```
 
@@ -538,13 +551,13 @@ En esta otra figura ( \ref{fig:fig3}) se observa que la mayoría de las personas
 
 # Pregunta 8: ¿Cuántos intentos de cuestionario hace de media cada estudiante?
 
-```{r fig7, echo=FALSE, fig.cap='Intentos_cuestionario/Usuario\\label{fig:fig7}', fig.height=4, fig.width=4, fig.pos = 'H'}
+```{r fig9, echo=FALSE, fig.cap='Intentos_cuestionario/Usuario\\label{fig:fig9}', fig.height=4, fig.width=4, fig.pos = 'H'}
 grafico_ej_8_1
 ```
 
 La figura \ref(fig:4) pretende mostrar la relación entre la cantidad de intentos realizados y los usuarios. De esta forma se observa que la mayoría ha realizado al menos un intento por cuestionario (pese a que no se puede estar completamente seguros de que hayan realizado todos los cuestionarios). Además, hay algunos usuarios que viendo este gráfico se sabe que habrá mínimo uno que no habrán realizado, estos son los que están por debajo de la línea punteada.
 
-```{r fig9, echo=FALSE, fig.cap="Intentos por cuestionario.\\label{fig:fig9}", fig.height=4, fig.width=4, fig.pos = 'H'}
+```{r fig10, echo=FALSE, fig.cap="Intentos por cuestionario.\\label{fig:fig10}", fig.height=4, fig.width=4, fig.pos = 'H'}
 grafico_ej_8_2
 ```
 
@@ -566,7 +579,7 @@ En esta tabla se observan las diez acciones que más se han realizado. Es sorpre
 
 # Pregunta 10: ¿Desde cuántas IPs distintas se conecta un mismo usuario? ¿Hay alguna ilógica?
 
-```{r fig10, echo=FALSE, fig.cap='Numero de IPs por Usuario\\label{fig:fig10}', fig.height=4, fig.width=4, fig.pos = 'H'}
+```{r fig11, echo=FALSE, fig.cap='Numero de IPs por Usuario\\label{fig:fig11}', fig.height=4, fig.width=4, fig.pos = 'H'}
 g_10
 ```
 
@@ -590,7 +603,7 @@ A parte, podemos ver como una IP si que es utilizada por 4 personas, esta es pos
 
 # Pregunta 12: ¿Qué porcentaje de usuarios accede desde redes móviles y cuántos desde redes fijas?
 
-```{r f_11, echo=FALSE, fig.cap='Accesos mediante red movil o fija\\label{fig:fig11}', fig.height=3, fig.pos='H', fig.width=3}
+```{r fig12, echo=FALSE, fig.cap='Accesos mediante red movil o fija\\label{fig:fig12}', fig.height=3, fig.pos='H', fig.width=3}
 g_12
 ```
 
@@ -602,7 +615,7 @@ Por ello hemos clasificado las diferentes IPs segun su tipo (representacion en l
 
 
 # Pregunta 13:  ¿Cuáles son los 10 eventos más frecuentes en el dataset?
-```{r fig12, echo=FALSE, fig.cap='Top 10 eventos más frecuentes\\label{fig:fig12}', fig.height=4, fig.width=5, fig.pos = 'H'}
+```{r fig13, echo=FALSE, fig.cap='Top 10 eventos más frecuentes\\label{fig:fig13}', fig.height=4, fig.width=5, fig.pos = 'H'}
 data_13_grafico + labs(title="")
 ```
 Para esta parte del análisis se identificaron los 10 eventos más frecuentes registrados en el dataset. Para ello se contabilizó el número de ocurrencias de cada tipo de evento y se ordenaron de mayor a menor frecuencia.
@@ -627,7 +640,7 @@ En general se observa que las tareas evaluables y obligatorias concentran la may
 
 # Pregunta 15: ¿Cuantos eventos tienen usuario afectado y cuántos no?
 
-```{r fig13, echo=FALSE, fig.cap='Comparación de eventos según si tiene usuario afectado\\label{fig:fig13}', fig.height=4, fig.width=4, fig.pos = 'H'}
+```{r fig14, echo=FALSE, fig.cap='Comparación de eventos según si tiene usuario afectado\\label{fig:fig14}', fig.height=4, fig.width=4, fig.pos = 'H'}
 data_15_grafico + labs(title="")
 ```
 
@@ -644,7 +657,7 @@ knitr::kable(data_16,
              booktabs = TRUE)
 ```
 
-```{r fig20, echo=FALSE, fig.cap='Interacciones generadas según componente\\label{fig:fig20}', fig.height=4, fig.width=4, fig.pos = 'H'}
+```{r fig15, echo=FALSE, fig.cap='Interacciones generadas según componente\\label{fig:fig15}', fig.height=4, fig.width=4, fig.pos = 'H'}
 data_16_grafico + labs(title="")
 ```
 
