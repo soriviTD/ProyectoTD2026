@@ -580,7 +580,7 @@ En esta tabla se observan las diez acciones que más se han realizado. Es sorpre
 # Pregunta 10: ¿Desde cuántas IPs distintas se conecta un mismo usuario? ¿Hay alguna ilógica?
 
 ```{r fig11, echo=FALSE, fig.cap='Numero de IPs por Usuario\\label{fig:fig11}', fig.height=4, fig.width=4, fig.pos = 'H'}
-g_10
+g_10 + scale_x_discrete(label = NULL) + theme(axis.ticks = element_blank())
 ```
 
 Como podemos visualizar en la figura \ref(fig:fig10) tenemos unos cuantos usuarios que se conectan con un numero muy najo de IPs y por eso no podemos llegar a verlos, pero hay otros que se llegan a conectar con mas de 100 IPs, esto puede ser debido al uso de redes moviles, VPN u otros factores externos.
@@ -651,11 +651,6 @@ Para ello se clasificó cada evento en dos categorías: "Con usuario afectado" c
 Los resultados muestran que 69.346 eventos, un 63.2% del total, no tienen usuario afectado, mientras que 40.400 eventos, el 36.8% restante, sí lo tienen. Esto indica que la mayoría de las acciones registradas en Moodle son individuales, es decir, el usuario actúa sobre la plataforma sin que ello repercuta directamente sobre otro usuario. Las interacciones entre usuarios, aunque presentes, representan poco más de un tercio del total de la actividad.
 
 # Pregunta 16: ¿Qué componentes generan más interacciones entre usuarios (usuario afectado distinto del usuario que realiza la acción)?
-```{r echo=FALSE}
-knitr::kable(data_16, 
-             caption = "Interacciones generadas según componente", 
-             booktabs = TRUE)
-```
 
 ```{r fig15, echo=FALSE, fig.cap='Interacciones generadas según componente\\label{fig:fig15}', fig.height=4, fig.width=4, fig.pos = 'H'}
 data_16_grafico + labs(title="")
